@@ -1,0 +1,13 @@
+version: "3.3"
+
+services:
+  s_postgres:
+    image: 'postgres:16.1-alpine'
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=main
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=main
+    volumes:
+      - ./db:/var/lib/postgresql/data
