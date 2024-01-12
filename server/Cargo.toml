@@ -9,9 +9,10 @@ axum = { version = "0.7.3", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0.104" }
 sqlx = { version = "0.7.3", features = ["runtime-async-std-rustls", "sqlite"] }
-tracing-subscriber = "0.3.17"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+tracing = "0.1.37"
 tower-sessions = { version = "0.9.1" }
 bcrypt = "0.15.0"
-tower-http = { version = "0.5.0", features = ["cors"] }
+tower-http = { version = "0.5.0", features = ["cors", "trace"] }
 dotenv = "0.15.0"
 log = "0.4.19"

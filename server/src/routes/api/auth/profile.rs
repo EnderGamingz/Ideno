@@ -28,14 +28,15 @@ pub async fn update_profile(
 ) -> Result<impl IntoResponse, AppError> {
     let user = check_user(&session, &*state.db).await?;
 
-    let pronouns_map = [("he", "he/him"), ("she", "she/her"), ("they", "they/them")];
-    let personal_pronouns = if let Some(user_pronouns) = &payload.pronouns {
-        let matched_pronouns = pronouns_map
-            .iter()
-            .find(|(key, _)| key == user_pronouns)
-            .map(|(_, value)| Some(value.to_string()));
-
-        matched_pronouns.unwrap_or_else(|| Some(user_pronouns.clone()))
+    const PRONOUNS_MAP: [(&str, &str); 3] =
+        [("he", "he/him"), ("she", "she/her"), ("they", "they/them")];
+    // Checks for payload pronouns if a template exists if not, just returns the pronouns
+    let personal_pronouns = if let Some(user_pronouns) = payload.pronouns {
+        PRONOUNS_MAP
+            .into_iter()
+            .find(|(key, _)| key == &user_pronouns)
+            .map(|(_, value)| Some(value.to_string()))
+            .unwrap_or(Some(user_pronouns))
     } else {
         None
     };
@@ -43,13 +44,13 @@ pub async fn update_profile(
     let profile = sqlx::query_as::<_, ProfileModel>(
         "UPDATE profiles SET first_name = $1, last_name = $2 , pronouns = $3, headline = $4, country = $5, city = $6, bio = $7 WHERE user_id = $8 RETURNING *",
     )
-    .bind(&payload.first_name)
-    .bind(&payload.last_name)
+    .bind(payload.first_name)
+    .bind(payload.last_name)
     .bind(personal_pronouns)
-    .bind(&payload.headline)
-    .bind(&payload.country)
-    .bind(&payload.city)
-    .bind(&payload.bio)
+    .bind(payload.headline)
+    .bind(payload.country)
+    .bind(payload.city)
+    .bind(payload.bio)
     .bind(user.id)
     .fetch_one(&*state.db)
     .await

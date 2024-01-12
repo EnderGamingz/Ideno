@@ -80,7 +80,11 @@ pub struct AppState {
 async fn main() {
     dotenv().ok();
 
-    tracing_subscriber::fmt::init();
+    tracing_subscriber::fmt()
+        .pretty()
+        .with_thread_names(true)
+        .with_max_level(tracing::Level::INFO)
+        .init();
 
     let cors = CorsLayer::new()
         .allow_methods([Method::GET, Method::POST, Method::DELETE, Method::PATCH])

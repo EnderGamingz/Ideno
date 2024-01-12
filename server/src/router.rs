@@ -1,7 +1,10 @@
 use axum::routing::{delete, get, post};
 use axum::Router;
 use tower_http::cors::CorsLayer;
+use tower_http::trace;
+use tower_http::trace::TraceLayer;
 use tower_sessions::{MemoryStore, SessionManagerLayer};
+use tracing::Level;
 
 use crate::{routes, AppState};
 
@@ -44,5 +47,10 @@ pub fn router(
         .nest("/api/v1", api_router)
         .layer(session_layer)
         .layer(cors)
+        .layer(
+            TraceLayer::new_for_http()
+                .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
+                .on_response(trace::DefaultOnResponse::new().level(Level::INFO)),
+        )
         .with_state(state)
 }

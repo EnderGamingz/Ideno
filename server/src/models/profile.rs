@@ -3,7 +3,6 @@ use sqlx::FromRow;
 
 #[derive(Clone, FromRow, Debug, Serialize)]
 pub struct ProfileModel {
-    pub id: i32,
     pub user_id: i32,
     pub first_name: String,
     pub last_name: String,
