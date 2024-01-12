@@ -14,6 +14,7 @@ use tower_http::cors::CorsLayer;
 use tower_sessions::cookie::time::Duration;
 use tower_sessions::{Expiry, MemoryStore, SessionManagerLayer};
 
+mod auth;
 mod models;
 mod router;
 mod routes;
@@ -22,6 +23,9 @@ mod routes;
 enum AppError {
     StateNotFound,
     InternalError,
+    UserNotFound,
+    NotLoggedIn,
+    BadRequest { error: String },
     NotAllowed { error: String },
 }
 
@@ -34,8 +38,20 @@ impl IntoResponse for AppError {
             Self::StateNotFound => {
                 status_code = StatusCode::UNAUTHORIZED;
             }
+            Self::UserNotFound => {
+                status_code = StatusCode::NOT_FOUND;
+                body = "User not found".to_string();
+            }
             Self::InternalError => {
                 status_code = StatusCode::INTERNAL_SERVER_ERROR;
+            }
+            Self::NotLoggedIn => {
+                status_code = StatusCode::UNAUTHORIZED;
+                body = "Not logged in".to_string();
+            }
+            Self::BadRequest { error } => {
+                status_code = StatusCode::BAD_REQUEST;
+                body = error;
             }
             Self::NotAllowed { error } => {
                 status_code = StatusCode::FORBIDDEN;

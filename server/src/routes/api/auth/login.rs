@@ -12,6 +12,15 @@ use tower_sessions::Session;
 use crate::models::user::UserModel;
 use crate::{AppError, AppState};
 
+pub fn sanitize_user(user: UserModel) -> HashMap<String, Value> {
+    let user_map: HashMap<String, Value> =
+        serde_json::from_str(&serde_json::to_string(&user).unwrap()).unwrap();
+    let mut sanitized_user = user_map.clone();
+    sanitized_user.remove("password");
+
+    sanitized_user
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct LoginCredentials {
     pub(crate) username: String,
@@ -53,16 +62,11 @@ pub async fn login(
         .await
         .unwrap();
 
-    let user_without_password: HashMap<String, Value> =
-        serde_json::from_str(&serde_json::to_string(&user).unwrap()).unwrap();
-    let mut user_without_password_clone = user_without_password.clone();
-    user_without_password_clone.remove("password");
+    let sanitized_user = sanitize_user(user.clone());
 
     Ok(Response::builder()
         .status(StatusCode::OK)
-        .body(Body::from(
-            serde_json::to_string(&user_without_password_clone).unwrap(),
-        ))
+        .body(Body::from(serde_json::to_string(&sanitized_user).unwrap()))
         .unwrap()
         .into_response())
 }

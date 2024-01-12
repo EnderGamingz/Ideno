@@ -38,10 +38,18 @@ pub async fn register(
 
     match password_hash {
         Ok(hash) => {
-            sqlx::query("INSERT INTO users (email, username, password) VALUES (?, ?, ?)")
-                .bind(payload.email)
-                .bind(payload.username)
-                .bind(hash)
+            let user = sqlx::query_as::<_, UserModel>(
+                "INSERT INTO users (email, username, password) VALUES (?, ?, ?) RETURNING *",
+            )
+            .bind(payload.email)
+            .bind(payload.username)
+            .bind(hash)
+            .fetch_one(&*state.db)
+            .await
+            .unwrap();
+
+            sqlx::query("INSERT INTO profiles (user_id) VALUES (?)")
+                .bind(user.id)
                 .execute(&*state.db)
                 .await
                 .unwrap();
