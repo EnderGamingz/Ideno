@@ -4,7 +4,8 @@ use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum_sessions::extractors::ReadableSession;
 
-use crate::{AppState, UserModel};
+use crate::AppState;
+use crate::models::user::UserModel;
 
 pub async fn auth(State(state): State<AppState>, session: ReadableSession) -> impl IntoResponse {
     if let Some(_user) = session.get::<String>("user_id") {

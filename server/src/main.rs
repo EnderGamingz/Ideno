@@ -16,12 +16,12 @@ use tower_http::cors::CorsLayer;
 
 mod router;
 mod routes;
+mod models;
 
 #[derive(Serialize)]
 enum AppError {
     StateNotFound,
     InternalError,
-    LinkNotFound,
     NotAllowed { error: String },
 }
 
@@ -37,9 +37,6 @@ impl IntoResponse for AppError {
             Self::InternalError => {
                 status_code = StatusCode::INTERNAL_SERVER_ERROR;
             }
-            Self::LinkNotFound => {
-                status_code = StatusCode::NOT_FOUND;
-            }
             Self::NotAllowed { error } => {
                 status_code = StatusCode::FORBIDDEN;
                 body = error;
@@ -51,19 +48,13 @@ impl IntoResponse for AppError {
 }
 
 #[derive(Clone, FromRow, Debug, Serialize)]
-pub struct UserModel {
-    id: i64,
-    name: String,
-    password: String,
-}
-
-#[derive(Clone, FromRow, Debug, Serialize)]
 pub struct LinksModel {
     id: i64,
     user_id: i64,
     source: String,
     destination: String,
 }
+
 
 #[derive(Clone)]
 pub struct AppState {

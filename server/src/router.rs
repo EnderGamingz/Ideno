@@ -21,10 +21,9 @@ fn create_auth_routes() -> Router<AppState> {
 fn create_user_routes() -> Router<AppState> {
     let get_users = routes::api::user::get_users;
     let delete_user = routes::api::user::delete_user;
-    let add_user = routes::api::user::add_user;
     Router::new()
         .route("/all", get(get_users))
-        .route("/", delete(delete_user).post(add_user))
+        .route("/", delete(delete_user))
 }
 
 pub fn router(
@@ -40,7 +39,7 @@ pub fn router(
         .nest("/user", user_routes);
 
     Router::new()
-        .nest("/api", api_router)
+        .nest("/api/v1", api_router)
         .layer(session_layer)
         .layer(cors)
         .with_state(state)

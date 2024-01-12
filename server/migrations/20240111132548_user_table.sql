@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users
     username   TEXT UNIQUE NOT NULL,
     email      TEXT UNIQUE NOT NULL,
     password   TEXT        NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    role       TEXT        NOT NULL DEFAULT 'user',
+    created_at TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
 );
