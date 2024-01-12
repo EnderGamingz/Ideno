@@ -1,0 +1,16 @@
+stages:
+  - deploy
+
+variables:
+  REGISTRY_URL: https://registry.setilic.com
+  REGISTRY_USER: setilic
+  PACKAGE_PATH: ideno/server
+
+
+build-job:
+  stage: deploy
+  image: docker:stable
+  script:
+      - echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USER" --password-stdin "$REGISTRY_URL"
+      - docker build -t '$REGISTRY_URL/$PACKAGE_PATH:dev' .
+      - docker push '$REGISTRY_URL/$PACKAGE_PATH:dev'
