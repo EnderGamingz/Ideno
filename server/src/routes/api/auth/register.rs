@@ -1,11 +1,11 @@
 use axum::extract::State;
 use axum::http::StatusCode;
-use axum::Json;
 use axum::response::IntoResponse;
+use axum::Json;
 use serde::{Deserialize, Serialize};
 
-use crate::{AppError, AppState};
 use crate::models::user::UserModel;
+use crate::{AppError, AppState};
 
 #[derive(Serialize, Deserialize)]
 pub struct RegisterCredentials {
@@ -18,15 +18,19 @@ pub async fn register(
     State(state): State<AppState>,
     Json(payload): Json<RegisterCredentials>,
 ) -> Result<impl IntoResponse, AppError> {
-    let user_results = sqlx::query_as::<_, UserModel>
-        ("SELECT * FROM users WHERE username = ? OR email = ?")
-        .bind(&payload.username)
-        .bind(&payload.email)
-        .fetch_one(&*state.db)
-        .await
-        .map_err(|_| AppError::InternalError)?;
+    let user_results = sqlx::query_as::<_, UserModel>(
+        "SELECT * FROM users WHERE username = ? OR email = ? LIMIT 1",
+    )
+    .bind(&payload.username)
+    .bind(&payload.email)
+    .fetch_optional(&*state.db)
+    .await
+    .map_err(|err| {
+        println!("Error: {}", err);
+        AppError::InternalError
+    })?;
 
-    if Some(user_results).is_some() {
+    if user_results.is_some() {
         return Ok(StatusCode::BAD_REQUEST.into_response());
     }
 

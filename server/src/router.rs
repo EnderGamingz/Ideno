@@ -1,9 +1,8 @@
 use crate::{routes, AppState};
 use axum::routing::{delete, get, post};
 use axum::Router;
-use axum_sessions::async_session::MemoryStore;
-use axum_sessions::SessionLayer;
 use tower_http::cors::CorsLayer;
+use tower_sessions::{MemoryStore, SessionManagerLayer};
 
 fn create_auth_routes() -> Router<AppState> {
     let auth = routes::api::auth::auth::auth;
@@ -28,7 +27,7 @@ fn create_user_routes() -> Router<AppState> {
 
 pub fn router(
     cors: CorsLayer,
-    session_layer: SessionLayer<MemoryStore>,
+    session_layer: SessionManagerLayer<MemoryStore>,
     state: AppState,
 ) -> Router {
     let auth_routes = create_auth_routes();

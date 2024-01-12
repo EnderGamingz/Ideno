@@ -2,12 +2,11 @@ use serde::Serialize;
 use sqlx::FromRow;
 
 #[derive(Clone, FromRow, Debug, Serialize)]
-pub struct UserModel {
+pub struct ContactInformationModel {
     pub id: i32,
-    pub username: String,
-    pub email: String,
-    pub password: String,
-    pub role: String,
+    pub user_id: i32,
+    pub type_field: String,
+    pub value: String,
     pub created_at: String,
     pub updated_at: String,
 }

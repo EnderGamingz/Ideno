@@ -1,22 +1,22 @@
 extern crate core;
 
+use std::net::SocketAddr;
 use std::sync::Arc;
 
-use axum::headers::HeaderValue;
 use axum::http::header::{ACCESS_CONTROL_ALLOW_CREDENTIALS, CONTENT_TYPE};
-use axum::http::Method;
 use axum::http::StatusCode;
+use axum::http::{HeaderValue, Method};
 use axum::response::{IntoResponse, Response};
-use axum_sessions::async_session::MemoryStore;
-use axum_sessions::SessionLayer;
 use dotenv::dotenv;
 use serde::Serialize;
 use sqlx::{FromRow, Pool, Sqlite, SqlitePool};
 use tower_http::cors::CorsLayer;
+use tower_sessions::cookie::time::Duration;
+use tower_sessions::{Expiry, MemoryStore, SessionManagerLayer};
 
+mod models;
 mod router;
 mod routes;
-mod models;
 
 #[derive(Serialize)]
 enum AppError {
@@ -55,7 +55,6 @@ pub struct LinksModel {
     destination: String,
 }
 
-
 #[derive(Clone)]
 pub struct AppState {
     db: Arc<Pool<Sqlite>>,
@@ -78,10 +77,11 @@ async fn main() {
         .allow_headers([CONTENT_TYPE, ACCESS_CONTROL_ALLOW_CREDENTIALS])
         .allow_credentials(true);
 
-    let store = MemoryStore::new();
+    let store = MemoryStore::default();
 
-    let secret = [0; 128];
-    let session_layer = SessionLayer::new(store, &secret).with_secure(false);
+    let session_layer = SessionManagerLayer::new(store)
+        .with_secure(false)
+        .with_expiry(Expiry::OnInactivity(Duration::days(1)));
 
     let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
@@ -95,11 +95,12 @@ async fn main() {
 
     let router = router::router(cors, session_layer, state);
 
-    let port = std::env::var("PORT").unwrap_or("3000".to_string());
-    let addr = format!("0.0.0.0:{}", port).parse().unwrap();
+    let port = std::env::var("PORT").unwrap_or(3000.to_string());
 
-    axum::Server::bind(&addr)
-        .serve(router.into_make_service())
+    let socket_addr = SocketAddr::from(([0, 0, 0, 0], port.parse().unwrap()));
+    let listener = tokio::net::TcpListener::bind(&socket_addr).await.unwrap();
+
+    axum::serve(listener, router.into_make_service())
         .await
         .unwrap()
 }

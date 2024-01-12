@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS experiences
     title       TEXT    NOT NULL,
     start_date  TEXT,
     end_date    TEXT,
-    type        TEXT,
+    exp_type    TEXT,
     description TEXT,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP

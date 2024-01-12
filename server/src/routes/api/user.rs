@@ -1,20 +1,22 @@
 use axum::body::Body;
 use axum::extract::State;
 use axum::http::StatusCode;
-use axum::Json;
 use axum::response::{IntoResponse, Response};
-use axum_sessions::extractors::ReadableSession;
+use axum::Json;
 use serde::{Deserialize, Serialize};
+use tower_sessions::Session;
 
-use crate::{AppError, AppState};
 use crate::models::user::UserModel;
+use crate::{AppError, AppState};
 
 pub async fn get_users(
     State(state): State<AppState>,
-    session: ReadableSession,
+    session: Session,
 ) -> Result<Json<Vec<UserModel>>, AppError> {
     let _user = session
         .get::<String>("user_id")
+        .await
+        .unwrap()
         .ok_or(AppError::StateNotFound)?;
 
     let results = sqlx::query_as::<_, UserModel>("SELECT * FROM users")
@@ -32,11 +34,13 @@ pub struct DeleteUserRequest {
 
 pub async fn delete_user(
     State(state): State<AppState>,
-    session: ReadableSession,
+    session: Session,
     Json(payload): Json<DeleteUserRequest>,
 ) -> Result<impl IntoResponse, AppError> {
     let _user = session
         .get::<String>("user_id")
+        .await
+        .unwrap()
         .ok_or(AppError::StateNotFound)?;
 
     if payload.id.to_string() == _user {

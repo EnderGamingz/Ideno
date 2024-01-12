@@ -5,9 +5,9 @@ use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
-use axum_sessions::extractors::WritableSession;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use tower_sessions::Session;
 
 use crate::models::user::UserModel;
 use crate::{AppError, AppState};
@@ -20,10 +20,10 @@ pub struct LoginCredentials {
 
 pub async fn login(
     State(state): State<AppState>,
-    mut session: WritableSession,
+    session: Session,
     Json(payload): Json<LoginCredentials>,
 ) -> Result<impl IntoResponse, AppError> {
-    if let Some(_user) = session.get::<String>("user_id") {
+    if let Some(_user) = session.get::<String>("user_id").await.unwrap() {
         return Ok(StatusCode::OK.into_response());
     }
 
@@ -48,7 +48,10 @@ pub async fn login(
         return Ok(StatusCode::UNAUTHORIZED.into_response());
     }
 
-    session.insert("user_id", user.id.to_string()).unwrap();
+    session
+        .insert("user_id", user.id.to_string())
+        .await
+        .unwrap();
 
     let user_without_password: HashMap<String, Value> =
         serde_json::from_str(&serde_json::to_string(&user).unwrap()).unwrap();

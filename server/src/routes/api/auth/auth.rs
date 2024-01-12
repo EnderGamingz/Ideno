@@ -2,13 +2,13 @@ use axum::body::Body;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
-use axum_sessions::extractors::ReadableSession;
+use tower_sessions::Session;
 
-use crate::AppState;
 use crate::models::user::UserModel;
+use crate::AppState;
 
-pub async fn auth(State(state): State<AppState>, session: ReadableSession) -> impl IntoResponse {
-    if let Some(_user) = session.get::<String>("user_id") {
+pub async fn auth(State(state): State<AppState>, session: Session) -> impl IntoResponse {
+    if let Some(_user) = session.get::<String>("user_id").await.unwrap() {
         let result = sqlx::query_as::<_, UserModel>("SELECT * FROM users WHERE id = $1")
             .bind(_user)
             .fetch_one(&*state.db)
