@@ -8,7 +8,8 @@ use tower_sessions::Session;
 
 use crate::auth::check_user::check_user;
 use crate::models::profile::ProfileModel;
-use crate::{AppError, AppState};
+use crate::response::error_handling::AppError;
+use crate::AppState;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ProfileUpdatePayload {

@@ -21,13 +21,28 @@ fn create_auth_routes() -> Router<AppState> {
     let get_contact_info = auth::profile::contact_information::get_contact_information;
     let add_contact_info = auth::profile::contact_information::add_contact_information;
     let delete_contact_info = auth::profile::contact_information::delete_contact_information;
+    let update_contact_info = auth::profile::contact_information::update_contact_information;
+    let get_certifications = auth::profile::certification::get_certifications;
+    let add_certification = auth::profile::certification::add_certification;
+    let delete_certification = auth::profile::certification::delete_certification;
+    let update_certification = auth::profile::certification::update_certification;
 
-    let profile_routes = Router::new().route("/", patch(update_profile)).route(
-        "/contact-information",
-        get(get_contact_info)
-            .post(add_contact_info)
-            .delete(delete_contact_info),
-    );
+    let profile_routes = Router::new()
+        .route("/", patch(update_profile))
+        .route(
+            "/contact-information",
+            get(get_contact_info)
+                .post(add_contact_info)
+                .delete(delete_contact_info)
+                .patch(update_contact_info),
+        )
+        .route(
+            "/certification",
+            get(get_certifications)
+                .post(add_certification)
+                .delete(delete_certification)
+                .patch(update_certification),
+        );
 
     // /auth
     Router::new()

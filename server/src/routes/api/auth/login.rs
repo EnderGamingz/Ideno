@@ -1,25 +1,13 @@
-use std::collections::HashMap;
-
-use axum::body::Body;
 use axum::extract::State;
 use axum::http::StatusCode;
-use axum::response::{IntoResponse, Response};
+use axum::response::IntoResponse;
 use axum::Json;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use tower_sessions::Session;
 
 use crate::models::user::UserModel;
-use crate::{AppError, AppState};
-
-pub fn sanitize_user(user: UserModel) -> HashMap<String, Value> {
-    let user_map: HashMap<String, Value> =
-        serde_json::from_str(&serde_json::to_string(&user).unwrap()).unwrap();
-    let mut sanitized_user = user_map.clone();
-    sanitized_user.remove("password");
-
-    sanitized_user
-}
+use crate::response::error_handling::AppError;
+use crate::AppState;
 
 #[derive(Serialize, Deserialize)]
 pub struct LoginCredentials {
@@ -62,11 +50,5 @@ pub async fn login(
         .await
         .unwrap();
 
-    let sanitized_user = sanitize_user(user.clone());
-
-    Ok(Response::builder()
-        .status(StatusCode::OK)
-        .body(Body::from(serde_json::to_string(&sanitized_user).unwrap()))
-        .unwrap()
-        .into_response())
+    Ok(StatusCode::OK.into_response())
 }

@@ -5,7 +5,8 @@ use axum::response::{IntoResponse, Response};
 use tower_sessions::Session;
 
 use crate::models::user::PublicUserModel;
-use crate::{AppError, AppState};
+use crate::response::error_handling::AppError;
+use crate::AppState;
 
 pub async fn auth(
     State(state): State<AppState>,

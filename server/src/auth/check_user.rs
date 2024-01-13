@@ -1,7 +1,7 @@
 use sqlx::{Pool, Sqlite};
 use tower_sessions::Session;
 
-use crate::AppError;
+use crate::response::error_handling::AppError;
 
 use crate::models::user::UserModel;
 

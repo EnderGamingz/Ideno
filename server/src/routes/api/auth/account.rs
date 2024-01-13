@@ -1,10 +1,12 @@
-use crate::auth::check_user::check_user;
-use crate::{AppError, AppState};
 use axum::extract::State;
-use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
 use tower_sessions::Session;
+
+use crate::auth::check_user::check_user;
+use crate::response::error_handling::AppError;
+use crate::response::success_handling::AppSuccess;
+use crate::AppState;
 
 #[derive(serde::Deserialize)]
 pub struct AccountUpdatePayload {
@@ -78,7 +80,7 @@ pub async fn update_account(
         .await
         .map_err(|_| return AppError::InternalError)?;
 
-    Ok(StatusCode::OK.into_response())
+    Ok(AppSuccess::UPDATED)
 }
 
 #[derive(serde::Deserialize)]
@@ -122,7 +124,7 @@ pub async fn update_password(
         .await
         .map_err(|_| return AppError::InternalError)?;
 
-    Ok(StatusCode::OK.into_response())
+    Ok(AppSuccess::UPDATED)
 }
 
 pub async fn delete_account(
@@ -137,5 +139,5 @@ pub async fn delete_account(
         .await
         .map_err(|_| return AppError::InternalError)?;
 
-    Ok(StatusCode::OK.into_response())
+    Ok(AppSuccess::DELETED)
 }

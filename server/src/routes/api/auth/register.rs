@@ -1,11 +1,12 @@
 use axum::extract::State;
-use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
 use serde::{Deserialize, Serialize};
 
 use crate::models::user::UserModel;
-use crate::{AppError, AppState};
+use crate::response::error_handling::AppError;
+use crate::response::success_handling::AppSuccess;
+use crate::AppState;
 
 #[derive(Serialize, Deserialize)]
 pub struct RegisterCredentials {
@@ -59,5 +60,5 @@ pub async fn register(
         Err(_) => Err(AppError::InternalError)?,
     };
 
-    Ok(StatusCode::CREATED.into_response())
+    Ok(AppSuccess::CREATED { id: None })
 }

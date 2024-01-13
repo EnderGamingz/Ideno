@@ -6,7 +6,8 @@ use axum::Json;
 use serde::{Deserialize, Serialize};
 use tower_sessions::Session;
 
-use crate::{AppError, AppState};
+use crate::response::error_handling::AppError;
+use crate::AppState;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DeleteUserRequest {

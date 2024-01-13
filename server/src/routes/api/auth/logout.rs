@@ -1,8 +1,8 @@
 use axum::http::StatusCode;
-use axum::response::{IntoResponse, Response};
+use axum::response::IntoResponse;
 use tower_sessions::Session;
 
-pub async fn logout(session: Session) -> Response {
+pub async fn logout(session: Session) -> impl IntoResponse {
     let session_exists = session.get::<String>("user_id").await.unwrap();
 
     if session_exists.is_none() {

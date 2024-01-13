@@ -4,11 +4,8 @@ use std::net::SocketAddr;
 use std::sync::Arc;
 
 use axum::http::header::{ACCESS_CONTROL_ALLOW_CREDENTIALS, CONTENT_TYPE};
-use axum::http::StatusCode;
 use axum::http::{HeaderValue, Method};
-use axum::response::{IntoResponse, Response};
 use dotenv::dotenv;
-use serde::Serialize;
 use sqlx::{Pool, Sqlite, SqlitePool};
 use tower_http::cors::CorsLayer;
 use tower_sessions::cookie::time::Duration;
@@ -16,58 +13,9 @@ use tower_sessions::{Expiry, MemoryStore, SessionManagerLayer};
 
 mod auth;
 mod models;
+mod response;
 mod router;
 mod routes;
-
-#[derive(Serialize)]
-enum AppError {
-    StateNotFound,
-    InternalError,
-    UserNotFound,
-    NotLoggedIn,
-    BadRequest { error: Option<String> },
-    NotAllowed { error: String },
-    DataConflict { error: String },
-}
-
-impl IntoResponse for AppError {
-    fn into_response(self) -> Response {
-        let status_code;
-        let mut body = "".to_string();
-
-        match self {
-            Self::StateNotFound => {
-                status_code = StatusCode::UNAUTHORIZED;
-            }
-            Self::UserNotFound => {
-                status_code = StatusCode::NOT_FOUND;
-                body = "User not found".to_string();
-            }
-            Self::InternalError => {
-                status_code = StatusCode::INTERNAL_SERVER_ERROR;
-                body = "Internal server error".to_string();
-            }
-            Self::NotLoggedIn => {
-                status_code = StatusCode::UNAUTHORIZED;
-                body = "Not logged in".to_string();
-            }
-            Self::BadRequest { error } => {
-                status_code = StatusCode::BAD_REQUEST;
-                body = error.unwrap_or("".to_string());
-            }
-            Self::NotAllowed { error } => {
-                status_code = StatusCode::FORBIDDEN;
-                body = error;
-            }
-            Self::DataConflict { error } => {
-                status_code = StatusCode::CONFLICT;
-                body = error;
-            }
-        }
-
-        (status_code, body).into_response()
-    }
-}
 
 #[derive(Clone)]
 pub struct AppState {

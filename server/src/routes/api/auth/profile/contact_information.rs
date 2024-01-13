@@ -6,7 +6,36 @@ use tower_sessions::Session;
 
 use crate::auth::check_user::check_user;
 use crate::models::contact_information::ContactInformationModel;
-use crate::{AppError, AppState};
+use crate::response::error_handling::AppError;
+use crate::response::success_handling::AppSuccess;
+use crate::AppState;
+
+enum ContactType {
+    Email,
+    Phone,
+    Website,
+    LinkedIn,
+    GitHub,
+    Twitter,
+    Facebook,
+    Instagram,
+}
+
+impl ContactType {
+    fn from_str(contact_type: &str) -> Option<Self> {
+        match contact_type {
+            "email" => Some(ContactType::Email),
+            "phone" => Some(ContactType::Phone),
+            "website" => Some(ContactType::Website),
+            "linkedin" => Some(ContactType::LinkedIn),
+            "github" => Some(ContactType::GitHub),
+            "twitter" => Some(ContactType::Twitter),
+            "facebook" => Some(ContactType::Facebook),
+            "instagram" => Some(ContactType::Instagram),
+            _ => None,
+        }
+    }
+}
 
 pub async fn get_contact_information(
     State(state): State<AppState>,
@@ -56,6 +85,13 @@ pub async fn add_contact_information(
         });
     }
 
+    let contact_type = ContactType::from_str(&payload.contact_type);
+    if contact_type.is_none() {
+        return Err(AppError::BadRequest {
+            error: Some("Invalid contact type".to_string()),
+        });
+    }
+
     let contact_info_result = sqlx::query_as::<_, ContactInformationModel>(
         "SELECT * FROM contact_information WHERE user_id = $1 AND type_field = $2 AND value = $3 LIMIT 1",
     )
@@ -72,15 +108,68 @@ pub async fn add_contact_information(
         });
     }
 
-    sqlx::query("INSERT INTO contact_information (user_id, type_field, value) VALUES ($1, $2, $3)")
+    let new_contact_info = sqlx::query_as::<_, (i32,)>("INSERT INTO contact_information (user_id, type_field, value) VALUES ($1, $2, $3) RETURNING id")
         .bind(user.id)
         .bind(payload.contact_type)
         .bind(payload.value)
-        .execute(&*state.db)
+        .fetch_one(&*state.db)
         .await
         .map_err(|_| AppError::InternalError)?;
 
-    Ok(StatusCode::OK.into_response())
+    Ok(AppSuccess::CREATED {
+        id: Some(new_contact_info.0),
+    })
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct UpdateContactInformationPayload {
+    id: i32,
+    contact_type: String,
+    value: String,
+}
+
+pub async fn update_contact_information(
+    State(state): State<AppState>,
+    session: Session,
+    Json(payload): Json<UpdateContactInformationPayload>,
+) -> Result<impl IntoResponse, AppError> {
+    let user = check_user(&session, &*state.db).await?;
+
+    let entry_does_exist = sqlx::query_as::<_, (i64,)>(
+        "SELECT COUNT(*) FROM contact_information WHERE id = $1 AND user_id = $2",
+    )
+    .bind(payload.id)
+    .bind(user.id)
+    .fetch_one(&*state.db)
+    .await
+    .map_err(|_| AppError::InternalError)
+    .map_or_else(|_| None, |count| Some(count.0 > 0));
+
+    if !entry_does_exist.unwrap() {
+        return Err(AppError::NotFound {
+            error: "Contact information not found".to_string(),
+        });
+    }
+
+    let contact_type = ContactType::from_str(&payload.contact_type);
+    if contact_type.is_none() {
+        return Err(AppError::BadRequest {
+            error: Some("Invalid contact type".to_string()),
+        });
+    }
+
+    sqlx::query(
+        "UPDATE contact_information SET type_field = $1, value = $2 WHERE id = $3 AND user_id = $4",
+    )
+    .bind(payload.contact_type)
+    .bind(payload.value)
+    .bind(payload.id)
+    .bind(user.id)
+    .execute(&*state.db)
+    .await
+    .map_err(|_| AppError::InternalError)?;
+
+    Ok(AppSuccess::UPDATED)
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -102,5 +191,5 @@ pub async fn delete_contact_information(
         .await
         .map_err(|_| AppError::InternalError)?;
 
-    Ok(StatusCode::OK.into_response())
+    Ok(AppSuccess::DELETED)
 }
