@@ -124,3 +124,18 @@ pub async fn update_password(
 
     Ok(StatusCode::OK.into_response())
 }
+
+pub async fn delete_account(
+    State(state): State<AppState>,
+    session: Session,
+) -> Result<impl IntoResponse, AppError> {
+    let user = check_user(&session, &*state.db).await?;
+
+    sqlx::query("DELETE FROM users WHERE id = $1")
+        .bind(user.id)
+        .execute(&*state.db)
+        .await
+        .map_err(|_| return AppError::InternalError)?;
+
+    Ok(StatusCode::OK.into_response())
+}

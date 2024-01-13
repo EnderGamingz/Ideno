@@ -16,6 +16,7 @@ fn create_auth_routes() -> Router<AppState> {
     let update_profile = routes::api::auth::profile::update_profile;
     let update_account = routes::api::auth::account::update_account;
     let update_password = routes::api::auth::account::update_password;
+    let delete_account = routes::api::auth::account::delete_account;
 
     // /auth
     Router::new()
@@ -24,7 +25,7 @@ fn create_auth_routes() -> Router<AppState> {
         .route("/register", post(register))
         .route("/logout", get(logout))
         .route("/profile", patch(update_profile))
-        .route("/account", patch(update_account))
+        .route("/account", patch(update_account).delete(delete_account))
         .route("/password", patch(update_password))
 }
 
