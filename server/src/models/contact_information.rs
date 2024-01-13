@@ -8,5 +8,4 @@ pub struct ContactInformationModel {
     pub type_field: String,
     pub value: String,
     pub created_at: String,
-    pub updated_at: String,
 }

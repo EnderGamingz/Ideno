@@ -9,5 +9,12 @@ pub struct UserModel {
     pub password: String,
     pub role: String,
     pub created_at: String,
-    pub updated_at: String,
+}
+
+#[derive(Clone, FromRow, Debug, Serialize)]
+pub struct PublicUserModel {
+    pub id: i32,
+    pub username: String,
+    pub email: String,
+    pub created_at: String,
 }

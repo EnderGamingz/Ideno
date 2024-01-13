@@ -55,7 +55,7 @@ pub async fn update_profile(
     .fetch_one(&*state.db)
     .await
     .map_err(|err| {
-        println!("Error: {:?}", err);
+        tracing::error!("Error updating profile: {}", err);
         AppError::InternalError
     })?;
 

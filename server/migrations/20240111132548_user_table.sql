@@ -5,6 +5,5 @@ CREATE TABLE IF NOT EXISTS users
     email      TEXT UNIQUE NOT NULL,
     password   TEXT        NOT NULL,
     role       TEXT        NOT NULL DEFAULT 'user',
-    created_at TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP
+    created_at TIMESTAMP            DEFAULT CURRENT_TIMESTAMP
 );

@@ -7,6 +7,5 @@ CREATE TABLE IF NOT EXISTS educations
     field      TEXT,
     start_date TEXT,
     end_date   TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )

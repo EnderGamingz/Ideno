@@ -12,5 +12,4 @@ pub struct ExperienceModel {
     pub exp_type: String,
     pub description: String,
     pub created_at: String,
-    pub updated_at: String,
 }

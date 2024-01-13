@@ -16,7 +16,7 @@ pub async fn check_user(session: &Session, db: &Pool<Sqlite>) -> Result<UserMode
         .fetch_optional(db)
         .await
         .map_err(|err| {
-            println!("Error: {}", err);
+            tracing::error!("Failed to fetch user: {}", err);
             AppError::InternalError
         })?;
 

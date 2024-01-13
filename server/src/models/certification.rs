@@ -12,5 +12,4 @@ pub struct CertificationModel {
     pub credential_id: String,
     pub credential_url: String,
     pub created_at: String,
-    pub updated_at: String,
 }

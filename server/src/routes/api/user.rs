@@ -6,30 +6,11 @@ use axum::Json;
 use serde::{Deserialize, Serialize};
 use tower_sessions::Session;
 
-use crate::models::user::UserModel;
 use crate::{AppError, AppState};
-
-pub async fn get_users(
-    State(state): State<AppState>,
-    session: Session,
-) -> Result<Json<Vec<UserModel>>, AppError> {
-    let _user = session
-        .get::<String>("user_id")
-        .await
-        .unwrap()
-        .ok_or(AppError::StateNotFound)?;
-
-    let results = sqlx::query_as::<_, UserModel>("SELECT * FROM users")
-        .fetch_all(&*state.db)
-        .await
-        .unwrap();
-
-    Ok(Json(results))
-}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DeleteUserRequest {
-    id: u64,
+    id: i32,
 }
 
 pub async fn delete_user(

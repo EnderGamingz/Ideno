@@ -26,7 +26,7 @@ pub async fn register(
     .fetch_optional(&*state.db)
     .await
     .map_err(|err| {
-        println!("Error: {}", err);
+        tracing::error!("Error fetching User: {}", err);
         AppError::InternalError
     })?;
 

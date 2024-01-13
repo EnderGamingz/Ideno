@@ -29,11 +29,8 @@ fn create_auth_routes() -> Router<AppState> {
 }
 
 fn create_user_routes() -> Router<AppState> {
-    let get_users = routes::api::user::get_users;
     let delete_user = routes::api::user::delete_user;
-    Router::new()
-        .route("/all", get(get_users))
-        .route("/", delete(delete_user))
+    Router::new().route("/", delete(delete_user))
 }
 
 pub fn router(

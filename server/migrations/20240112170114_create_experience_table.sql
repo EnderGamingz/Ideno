@@ -8,6 +8,5 @@ CREATE TABLE IF NOT EXISTS experiences
     end_date    TEXT,
     exp_type    TEXT,
     description TEXT,
-    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )

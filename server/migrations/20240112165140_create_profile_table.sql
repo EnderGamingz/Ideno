@@ -8,6 +8,5 @@ CREATE TABLE IF NOT EXISTS profiles
     country    VARCHAR(255),
     city       VARCHAR(255),
     bio        TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )

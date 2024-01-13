@@ -11,5 +11,4 @@ pub struct EducationModel {
     pub start_date: String,
     pub end_date: String,
     pub created_at: String,
-    pub updated_at: String,
 }

@@ -8,6 +8,5 @@ CREATE TABLE IF NOT EXISTS certification
     expiration_date TIMESTAMP,
     credential_id   VARCHAR(255),
     credential_url  VARCHAR(255),
-    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at      TIMESTAMP
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )

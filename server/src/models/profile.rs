@@ -12,5 +12,4 @@ pub struct ProfileModel {
     pub city: String,
     pub bio: String,
     pub created_at: String,
-    pub updated_at: String,
 }
