@@ -6,17 +6,28 @@ use tower_http::trace::TraceLayer;
 use tower_sessions::{MemoryStore, SessionManagerLayer};
 use tracing::Level;
 
-use crate::{routes, AppState};
+use crate::routes::api::{auth, user};
+use crate::AppState;
 
 fn create_auth_routes() -> Router<AppState> {
-    let auth = routes::api::auth::auth::auth;
-    let login = routes::api::auth::login::login;
-    let register = routes::api::auth::register::register;
-    let logout = routes::api::auth::logout::logout;
-    let update_profile = routes::api::auth::profile::update_profile;
-    let update_account = routes::api::auth::account::update_account;
-    let update_password = routes::api::auth::account::update_password;
-    let delete_account = routes::api::auth::account::delete_account;
+    let auth = auth::auth::auth;
+    let login = auth::login::login;
+    let register = auth::register::register;
+    let logout = auth::logout::logout;
+    let update_profile = auth::profile::index::update_profile;
+    let update_account = auth::account::update_account;
+    let update_password = auth::account::update_password;
+    let delete_account = auth::account::delete_account;
+    let get_contact_info = auth::profile::contact_information::get_contact_information;
+    let add_contact_info = auth::profile::contact_information::add_contact_information;
+    let delete_contact_info = auth::profile::contact_information::delete_contact_information;
+
+    let profile_routes = Router::new().route("/", patch(update_profile)).route(
+        "/contact-information",
+        get(get_contact_info)
+            .post(add_contact_info)
+            .delete(delete_contact_info),
+    );
 
     // /auth
     Router::new()
@@ -24,13 +35,13 @@ fn create_auth_routes() -> Router<AppState> {
         .route("/login", post(login))
         .route("/register", post(register))
         .route("/logout", get(logout))
-        .route("/profile", patch(update_profile))
         .route("/account", patch(update_account).delete(delete_account))
         .route("/password", patch(update_password))
+        .nest("/profile", profile_routes)
 }
 
 fn create_user_routes() -> Router<AppState> {
-    let delete_user = routes::api::user::delete_user;
+    let delete_user = user::delete_user;
     Router::new().route("/", delete(delete_user))
 }
 

@@ -27,6 +27,7 @@ enum AppError {
     NotLoggedIn,
     BadRequest { error: Option<String> },
     NotAllowed { error: String },
+    DataConflict { error: String },
 }
 
 impl IntoResponse for AppError {
@@ -58,6 +59,10 @@ impl IntoResponse for AppError {
                 status_code = StatusCode::FORBIDDEN;
                 body = error;
             }
+            Self::DataConflict { error } => {
+                status_code = StatusCode::CONFLICT;
+                body = error;
+            }
         }
 
         (status_code, body).into_response()
@@ -75,18 +80,24 @@ async fn main() {
 
     tracing_subscriber::fmt()
         .pretty()
-        .with_thread_names(true)
+        .with_target(false)
+        .with_level(true)
+        .with_file(false)
+        .with_line_number(false)
+        .compact()
         .with_max_level(tracing::Level::INFO)
         .init();
 
+    let cors_origin = std::env::var("CORS_ORIGIN")
+        .expect("CORS_ORIGIN must be set")
+        .parse::<HeaderValue>()
+        .unwrap();
+
+    tracing::info!(name: "bootstrap", "CORS_ORIGIN: {}", cors_origin.to_str().unwrap());
+
     let cors = CorsLayer::new()
         .allow_methods([Method::GET, Method::POST, Method::DELETE, Method::PATCH])
-        .allow_origin(
-            std::env::var("CORS_ORIGIN")
-                .expect("CORS_ORIGIN must be set")
-                .parse::<HeaderValue>()
-                .unwrap(),
-        )
+        .allow_origin(cors_origin)
         .allow_headers([CONTENT_TYPE, ACCESS_CONTROL_ALLOW_CREDENTIALS])
         .allow_credentials(true);
 
@@ -100,6 +111,8 @@ async fn main() {
 
     let db = SqlitePool::connect(&*db_url).await.unwrap();
 
+    tracing::info!(name: "bootstrap", "Connected to database at {}", db_url);
+
     sqlx::migrate!().run(&db).await.unwrap();
 
     let db = Arc::new(db);
@@ -112,6 +125,8 @@ async fn main() {
 
     let socket_addr = SocketAddr::from(([0, 0, 0, 0], port.parse().unwrap()));
     let listener = tokio::net::TcpListener::bind(&socket_addr).await.unwrap();
+
+    tracing::info!(name: "bootstrap", "Listening on {}", socket_addr);
 
     axum::serve(listener, router.into_make_service())
         .await
