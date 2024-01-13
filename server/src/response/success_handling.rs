@@ -4,7 +4,7 @@ use serde::Serialize;
 
 #[derive(Serialize)]
 pub enum AppSuccess {
-    CREATED { id: Option<i32> },
+    CREATED { id: Option<i64> },
     DELETED,
     UPDATED,
 }

@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS educations
     school     TEXT NOT NULL,
     degree     TEXT,
     field      TEXT,
-    start_date TEXT,
-    end_date   TEXT,
+    start_date TIMESTAMP,
+    end_date   TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )

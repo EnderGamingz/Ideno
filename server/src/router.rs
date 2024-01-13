@@ -18,14 +18,26 @@ fn create_auth_routes() -> Router<AppState> {
     let update_account = auth::account::update_account;
     let update_password = auth::account::update_password;
     let delete_account = auth::account::delete_account;
+
     let get_contact_info = auth::profile::contact_information::get_contact_information;
     let add_contact_info = auth::profile::contact_information::add_contact_information;
     let delete_contact_info = auth::profile::contact_information::delete_contact_information;
     let update_contact_info = auth::profile::contact_information::update_contact_information;
+
     let get_certifications = auth::profile::certification::get_certifications;
     let add_certification = auth::profile::certification::add_certification;
     let delete_certification = auth::profile::certification::delete_certification;
     let update_certification = auth::profile::certification::update_certification;
+
+    let get_educations = auth::profile::education::get_educations;
+    let add_education = auth::profile::education::add_education;
+    let update_education = auth::profile::education::update_education;
+    let delete_education = auth::profile::education::delete_education;
+
+    let get_experiences = auth::profile::experience::get_experiences;
+    let add_experience = auth::profile::experience::add_experience;
+    let update_experience = auth::profile::experience::update_experience;
+    let delete_experience = auth::profile::experience::delete_experience;
 
     let profile_routes = Router::new()
         .route("/", patch(update_profile))
@@ -42,6 +54,20 @@ fn create_auth_routes() -> Router<AppState> {
                 .post(add_certification)
                 .delete(delete_certification)
                 .patch(update_certification),
+        )
+        .route(
+            "/education",
+            get(get_educations)
+                .post(add_education)
+                .delete(delete_education)
+                .patch(update_education),
+        )
+        .route(
+            "/experience",
+            get(get_experiences)
+                .post(add_experience)
+                .delete(delete_experience)
+                .patch(update_experience),
         );
 
     // /auth

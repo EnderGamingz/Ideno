@@ -6,6 +6,7 @@ use tower_sessions::Session;
 
 use crate::auth::check_user::check_user;
 use crate::models::certification::CertificationModel;
+use crate::models::user::UserModel;
 use crate::response::error_handling::AppError;
 use crate::response::success_handling::AppSuccess;
 use crate::AppState;
@@ -33,8 +34,8 @@ pub async fn get_certifications(
 pub struct AddCertificationPayload {
     name: String,
     organization: String,
-    issue_date: Option<i64>,
-    expiration_date: Option<i64>,
+    issue_date: Option<String>,
+    expiration_date: Option<String>,
     credential_id: Option<String>,
     credential_url: Option<String>,
 }
@@ -59,7 +60,7 @@ pub async fn add_certification(
         });
     }
 
-    let new_certification = sqlx::query_as::<_, (i32, )>
+    let new_certification = sqlx::query_as::<_, (i64, )>
         ("INSERT INTO certification (user_id, name, organization, issue_date, expiration_date, credential_id, credential_url) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id")
         .bind(user.id)
         .bind(payload.name)
@@ -82,8 +83,8 @@ pub struct UpdateCertificationPayload {
     id: i32,
     name: String,
     organization: String,
-    issue_date: Option<i64>,
-    expiration_date: Option<i64>,
+    issue_date: Option<String>,
+    expiration_date: Option<String>,
     credential_id: Option<String>,
     credential_url: Option<String>,
 }
@@ -95,21 +96,7 @@ pub async fn update_certification(
 ) -> Result<impl IntoResponse, AppError> {
     let user = check_user(&session, &*state.db).await?;
 
-    let entry_does_exist = sqlx::query_as::<_, (i64,)>(
-        "SELECT COUNT(*) FROM certification WHERE id = $1 AND user_id = $2",
-    )
-    .bind(payload.id)
-    .bind(user.id)
-    .fetch_one(&*state.db)
-    .await
-    .map_err(|_| AppError::InternalError)
-    .map_or_else(|_| None, |count| Some(count.0 > 0));
-
-    if !entry_does_exist.unwrap() {
-        return Err(AppError::NotFound {
-            error: "Certification not found".to_string(),
-        });
-    }
+    certification_exists(&state, payload.id, &user).await?;
 
     sqlx::query("UPDATE certification SET name = $1, organization = $2, issue_date = $3, expiration_date = $4, credential_id = $5, credential_url = $6 WHERE id = $7 AND user_id = $8")
         .bind(payload.name)
@@ -139,6 +126,8 @@ pub async fn delete_certification(
 ) -> Result<impl IntoResponse, AppError> {
     let user = check_user(&session, &*state.db).await?;
 
+    certification_exists(&state, payload.id, &user).await?;
+
     sqlx::query("DELETE FROM certification WHERE id = $1 AND user_id = $2")
         .bind(payload.id)
         .bind(user.id)
@@ -147,4 +136,28 @@ pub async fn delete_certification(
         .map_err(|_| AppError::InternalError)?;
 
     Ok(AppSuccess::DELETED)
+}
+
+async fn certification_exists(
+    state: &AppState,
+    payload: i32,
+    user: &UserModel,
+) -> Result<Option<bool>, AppError> {
+    let flag = sqlx::query_as::<_, (i64,)>(
+        "SELECT COUNT(*) FROM certification WHERE id = $1 AND user_id = $2",
+    )
+    .bind(payload)
+    .bind(user.id)
+    .fetch_one(&*state.db)
+    .await
+    .map_err(|_| AppError::InternalError)
+    .map_or_else(|_| None, |count| Some(count.0 > 0));
+
+    if !flag.unwrap() {
+        return Err(AppError::NotFound {
+            error: "Certification not found".to_string(),
+        });
+    }
+
+    Ok(flag)
 }

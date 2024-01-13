@@ -6,6 +6,7 @@ use tower_sessions::Session;
 
 use crate::auth::check_user::check_user;
 use crate::models::contact_information::ContactInformationModel;
+use crate::models::user::UserModel;
 use crate::response::error_handling::AppError;
 use crate::response::success_handling::AppSuccess;
 use crate::AppState;
@@ -73,8 +74,6 @@ pub async fn add_contact_information(
     let count =
         sqlx::query_as::<_, (i64,)>("SELECT COUNT(*) FROM contact_information WHERE user_id = $1")
             .bind(user.id)
-            .bind(&payload.contact_type)
-            .bind(&payload.value)
             .fetch_one(&*state.db)
             .await
             .map_err(|_| AppError::InternalError)?;
@@ -108,7 +107,7 @@ pub async fn add_contact_information(
         });
     }
 
-    let new_contact_info = sqlx::query_as::<_, (i32,)>("INSERT INTO contact_information (user_id, type_field, value) VALUES ($1, $2, $3) RETURNING id")
+    let new_contact_info = sqlx::query_as::<_, (i64,)>("INSERT INTO contact_information (user_id, type_field, value) VALUES ($1, $2, $3) RETURNING id")
         .bind(user.id)
         .bind(payload.contact_type)
         .bind(payload.value)
@@ -135,21 +134,7 @@ pub async fn update_contact_information(
 ) -> Result<impl IntoResponse, AppError> {
     let user = check_user(&session, &*state.db).await?;
 
-    let entry_does_exist = sqlx::query_as::<_, (i64,)>(
-        "SELECT COUNT(*) FROM contact_information WHERE id = $1 AND user_id = $2",
-    )
-    .bind(payload.id)
-    .bind(user.id)
-    .fetch_one(&*state.db)
-    .await
-    .map_err(|_| AppError::InternalError)
-    .map_or_else(|_| None, |count| Some(count.0 > 0));
-
-    if !entry_does_exist.unwrap() {
-        return Err(AppError::NotFound {
-            error: "Contact information not found".to_string(),
-        });
-    }
+    contact_info_exists(&state, payload.id, &user).await?;
 
     let contact_type = ContactType::from_str(&payload.contact_type);
     if contact_type.is_none() {
@@ -184,6 +169,8 @@ pub async fn delete_contact_information(
 ) -> Result<impl IntoResponse, AppError> {
     let user = check_user(&session, &*state.db).await?;
 
+    contact_info_exists(&state, payload.id, &user).await?;
+
     sqlx::query("DELETE FROM contact_information WHERE id = $1 AND user_id = $2")
         .bind(payload.id)
         .bind(user.id)
@@ -192,4 +179,28 @@ pub async fn delete_contact_information(
         .map_err(|_| AppError::InternalError)?;
 
     Ok(AppSuccess::DELETED)
+}
+
+async fn contact_info_exists(
+    state: &AppState,
+    payload: i32,
+    user: &UserModel,
+) -> Result<Option<bool>, AppError> {
+    let flag = sqlx::query_as::<_, (i64,)>(
+        "SELECT COUNT(*) FROM contact_information WHERE id = $1 AND user_id = $2",
+    )
+    .bind(payload)
+    .bind(user.id)
+    .fetch_one(&*state.db)
+    .await
+    .map_err(|_| AppError::InternalError)
+    .map_or_else(|_| None, |count| Some(count.0 > 0));
+
+    if !flag.unwrap() {
+        return Err(AppError::NotFound {
+            error: "Contact information not found".to_string(),
+        });
+    }
+
+    Ok(flag)
 }
