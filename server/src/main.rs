@@ -9,7 +9,7 @@ use axum::http::{HeaderValue, Method};
 use axum::response::{IntoResponse, Response};
 use dotenv::dotenv;
 use serde::Serialize;
-use sqlx::{FromRow, Pool, Sqlite, SqlitePool};
+use sqlx::{Pool, Sqlite, SqlitePool};
 use tower_http::cors::CorsLayer;
 use tower_sessions::cookie::time::Duration;
 use tower_sessions::{Expiry, MemoryStore, SessionManagerLayer};
@@ -25,7 +25,7 @@ enum AppError {
     InternalError,
     UserNotFound,
     NotLoggedIn,
-    BadRequest { error: String },
+    BadRequest { error: Option<String> },
     NotAllowed { error: String },
 }
 
@@ -44,6 +44,7 @@ impl IntoResponse for AppError {
             }
             Self::InternalError => {
                 status_code = StatusCode::INTERNAL_SERVER_ERROR;
+                body = "Internal server error".to_string();
             }
             Self::NotLoggedIn => {
                 status_code = StatusCode::UNAUTHORIZED;
@@ -51,7 +52,7 @@ impl IntoResponse for AppError {
             }
             Self::BadRequest { error } => {
                 status_code = StatusCode::BAD_REQUEST;
-                body = error;
+                body = error.unwrap_or("".to_string());
             }
             Self::NotAllowed { error } => {
                 status_code = StatusCode::FORBIDDEN;
@@ -61,14 +62,6 @@ impl IntoResponse for AppError {
 
         (status_code, body).into_response()
     }
-}
-
-#[derive(Clone, FromRow, Debug, Serialize)]
-pub struct LinksModel {
-    id: i64,
-    user_id: i64,
-    source: String,
-    destination: String,
 }
 
 #[derive(Clone)]
@@ -101,7 +94,7 @@ async fn main() {
 
     let session_layer = SessionManagerLayer::new(store)
         .with_secure(false)
-        .with_expiry(Expiry::OnInactivity(Duration::days(1)));
+        .with_expiry(Expiry::OnInactivity(Duration::days(30)));
 
     let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 

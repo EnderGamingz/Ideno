@@ -31,7 +31,9 @@ pub async fn register(
     })?;
 
     if user_results.is_some() {
-        return Ok(StatusCode::BAD_REQUEST.into_response());
+        return Err(AppError::BadRequest {
+            error: Some("User already exists".to_string()),
+        })?;
     }
 
     let password_hash = bcrypt::hash(payload.password, 12);

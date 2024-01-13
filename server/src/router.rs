@@ -1,4 +1,4 @@
-use axum::routing::{delete, get, post};
+use axum::routing::{delete, get, patch, post};
 use axum::Router;
 use tower_http::cors::CorsLayer;
 use tower_http::trace;
@@ -14,13 +14,18 @@ fn create_auth_routes() -> Router<AppState> {
     let register = routes::api::auth::register::register;
     let logout = routes::api::auth::logout::logout;
     let update_profile = routes::api::auth::profile::update_profile;
+    let update_account = routes::api::auth::account::update_account;
+    let update_password = routes::api::auth::account::update_password;
 
+    // /auth
     Router::new()
         .route("/", get(auth))
         .route("/login", post(login))
         .route("/register", post(register))
         .route("/logout", get(logout))
-        .route("/profile", post(update_profile))
+        .route("/profile", patch(update_profile))
+        .route("/account", patch(update_account))
+        .route("/password", patch(update_password))
 }
 
 fn create_user_routes() -> Router<AppState> {
