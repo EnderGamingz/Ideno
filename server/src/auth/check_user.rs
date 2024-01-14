@@ -1,3 +1,4 @@
+use crate::utils::get_user;
 use sqlx::{Pool, Sqlite};
 use tower_sessions::Session;
 
@@ -11,14 +12,7 @@ pub async fn check_user(session: &Session, db: &Pool<Sqlite>) -> Result<UserMode
         None => return Err(AppError::NotLoggedIn)?,
     };
 
-    let user_result = sqlx::query_as::<_, UserModel>("SELECT * FROM users WHERE id = ? LIMIT 1")
-        .bind(user_id)
-        .fetch_optional(db)
-        .await
-        .map_err(|err| {
-            tracing::error!("Failed to fetch user: {}", err);
-            AppError::InternalError
-        })?;
+    let user_result = get_user::get_user(db, user_id).await?;
 
     match user_result {
         Some(user) => Ok(user),

@@ -96,7 +96,7 @@ pub async fn update_certification(
 ) -> Result<impl IntoResponse, AppError> {
     let user = check_user(&session, &*state.db).await?;
 
-    certification_exists(&state, payload.id, &user).await?;
+    certification_exists_for_user_id(&state, payload.id, &user).await?;
 
     sqlx::query("UPDATE certification SET name = $1, organization = $2, issue_date = $3, expiration_date = $4, credential_id = $5, credential_url = $6 WHERE id = $7 AND user_id = $8")
         .bind(payload.name)
@@ -126,7 +126,7 @@ pub async fn delete_certification(
 ) -> Result<impl IntoResponse, AppError> {
     let user = check_user(&session, &*state.db).await?;
 
-    certification_exists(&state, payload.id, &user).await?;
+    certification_exists_for_user_id(&state, payload.id, &user).await?;
 
     sqlx::query("DELETE FROM certification WHERE id = $1 AND user_id = $2")
         .bind(payload.id)
@@ -138,7 +138,7 @@ pub async fn delete_certification(
     Ok(AppSuccess::DELETED)
 }
 
-async fn certification_exists(
+async fn certification_exists_for_user_id(
     state: &AppState,
     payload: i32,
     user: &UserModel,

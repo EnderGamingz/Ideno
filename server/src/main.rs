@@ -16,6 +16,7 @@ mod models;
 mod response;
 mod router;
 mod routes;
+mod utils;
 
 #[derive(Clone)]
 pub struct AppState {

@@ -6,7 +6,7 @@ use tower_http::trace::TraceLayer;
 use tower_sessions::{MemoryStore, SessionManagerLayer};
 use tracing::Level;
 
-use crate::routes::api::{auth, user};
+use crate::routes::api::auth;
 use crate::AppState;
 
 fn create_auth_routes() -> Router<AppState> {
@@ -14,10 +14,24 @@ fn create_auth_routes() -> Router<AppState> {
     let login = auth::login::login;
     let register = auth::register::register;
     let logout = auth::logout::logout;
-    let update_profile = auth::profile::index::update_profile;
     let update_account = auth::account::update_account;
     let update_password = auth::account::update_password;
     let delete_account = auth::account::delete_account;
+
+    // /auth
+    Router::new()
+        .route("/", get(auth))
+        .route("/login", post(login))
+        .route("/register", post(register))
+        .route("/logout", get(logout))
+        .route("/account", patch(update_account).delete(delete_account))
+        .route("/password", patch(update_password))
+        .nest("/profile", create_profile_routes())
+        .nest("/admin", create_admin_routes())
+}
+
+fn create_profile_routes() -> Router<AppState> {
+    let update_profile = auth::profile::index::update_profile;
 
     let get_contact_info = auth::profile::contact_information::get_contact_information;
     let add_contact_info = auth::profile::contact_information::add_contact_information;
@@ -39,7 +53,7 @@ fn create_auth_routes() -> Router<AppState> {
     let update_experience = auth::profile::experience::update_experience;
     let delete_experience = auth::profile::experience::delete_experience;
 
-    let profile_routes = Router::new()
+    Router::new()
         .route("/", patch(update_profile))
         .route(
             "/contact-information",
@@ -68,22 +82,34 @@ fn create_auth_routes() -> Router<AppState> {
                 .post(add_experience)
                 .delete(delete_experience)
                 .patch(update_experience),
-        );
-
-    // /auth
-    Router::new()
-        .route("/", get(auth))
-        .route("/login", post(login))
-        .route("/register", post(register))
-        .route("/logout", get(logout))
-        .route("/account", patch(update_account).delete(delete_account))
-        .route("/password", patch(update_password))
-        .nest("/profile", profile_routes)
+        )
 }
 
-fn create_user_routes() -> Router<AppState> {
-    let delete_user = user::delete_user;
-    Router::new().route("/", delete(delete_user))
+fn create_admin_routes() -> Router<AppState> {
+    let get_all_users = auth::admin::user::admin_get_users;
+    let get_user = auth::admin::user::admin_get_user;
+    let delete_user = auth::admin::user::admin_delete_user;
+    let update_user = auth::admin::user::admin_update_user;
+
+    let delete_certification = auth::admin::certification::admin_delete_certification;
+    let delete_education = auth::admin::education::admin_delete_education;
+    let delete_experience = auth::admin::experience::admin_delete_experience;
+    let delete_contact_information =
+        auth::admin::contact_information::admin_delete_contact_information;
+
+    Router::new()
+        .route("/users", get(get_all_users))
+        .route(
+            "/users/:id",
+            get(get_user).delete(delete_user).patch(update_user),
+        )
+        .route("/certification/:id", delete(delete_certification))
+        .route("/education/:id", delete(delete_education))
+        .route("/experience/:id", delete(delete_experience))
+        .route(
+            "/contact-information/:id",
+            delete(delete_contact_information),
+        )
 }
 
 pub fn router(
@@ -91,12 +117,7 @@ pub fn router(
     session_layer: SessionManagerLayer<MemoryStore>,
     state: AppState,
 ) -> Router {
-    let auth_routes = create_auth_routes();
-    let user_routes = create_user_routes();
-
-    let api_router = Router::new()
-        .nest("/auth", auth_routes)
-        .nest("/user", user_routes);
+    let api_router = Router::new().nest("/auth", create_auth_routes());
 
     Router::new()
         .nest("/api/v1", api_router)

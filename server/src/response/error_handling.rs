@@ -4,7 +4,6 @@ use serde::Serialize;
 
 #[derive(Serialize)]
 pub enum AppError {
-    StateNotFound,
     InternalError,
     UserNotFound,
     NotLoggedIn,
@@ -12,17 +11,15 @@ pub enum AppError {
     NotAllowed { error: String },
     DataConflict { error: String },
     NotFound { error: String },
+    Forbidden { error: Option<String> },
 }
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         let status_code;
-        let mut body = "".to_string();
+        let body;
 
         match self {
-            Self::StateNotFound => {
-                status_code = StatusCode::UNAUTHORIZED;
-            }
             Self::UserNotFound => {
                 status_code = StatusCode::NOT_FOUND;
                 body = "User not found".to_string();
@@ -50,6 +47,10 @@ impl IntoResponse for AppError {
             Self::NotFound { error } => {
                 status_code = StatusCode::NOT_FOUND;
                 body = error;
+            }
+            Self::Forbidden { error } => {
+                status_code = StatusCode::FORBIDDEN;
+                body = error.unwrap_or("".to_string());
             }
         }
 
