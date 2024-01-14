@@ -1,4 +1,4 @@
-use axum::extract::State;
+use axum::extract::{Path, State};
 use axum::response::{IntoResponse, Response};
 use axum::Json;
 use tower_sessions::Session;
@@ -112,7 +112,6 @@ pub async fn add_experience(
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct UpdateExperiencePayload {
-    id: i32,
     company: String,
     title: String,
     start_date: Option<String>,
@@ -124,10 +123,11 @@ pub struct UpdateExperiencePayload {
 pub async fn update_experience(
     State(state): State<AppState>,
     session: Session,
+    Path(id): Path<i32>,
     Json(payload): Json<UpdateExperiencePayload>,
 ) -> Result<impl IntoResponse, AppError> {
     let user = check_user(&session, &*state.db).await?;
-    experience_exists(&state, payload.id, &user).await?;
+    experience_exists_for_user_id(&state, id, &user).await?;
 
     validate_experience_type(&payload.exp_type)?;
 
@@ -140,7 +140,7 @@ pub async fn update_experience(
     .bind(payload.end_date)
     .bind(payload.exp_type)
     .bind(payload.description)
-    .bind(payload.id)
+    .bind(id)
     .bind(user.id)
     .execute(&*state.db)
     .await
@@ -149,22 +149,17 @@ pub async fn update_experience(
     Ok(AppSuccess::UPDATED)
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
-pub struct DeleteExperiencePayload {
-    id: i32,
-}
-
 pub async fn delete_experience(
     State(state): State<AppState>,
     session: Session,
-    Json(payload): Json<DeleteExperiencePayload>,
+    Path(id): Path<i32>,
 ) -> Result<impl IntoResponse, AppError> {
     let user = check_user(&session, &*state.db).await?;
 
-    experience_exists(&state, payload.id, &user).await?;
+    experience_exists_for_user_id(&state, id, &user).await?;
 
     sqlx::query("DELETE FROM experiences WHERE id = $1 AND user_id = $2")
-        .bind(payload.id)
+        .bind(id)
         .bind(user.id)
         .execute(&*state.db)
         .await
@@ -185,7 +180,7 @@ fn validate_experience_type(experience_type: &Option<String>) -> Result<(), AppE
     Ok(())
 }
 
-async fn experience_exists(
+async fn experience_exists_for_user_id(
     state: &AppState,
     payload: i32,
     user: &UserModel,

@@ -57,31 +57,29 @@ fn create_profile_routes() -> Router<AppState> {
         .route("/", patch(update_profile))
         .route(
             "/contact-information",
-            get(get_contact_info)
-                .post(add_contact_info)
-                .delete(delete_contact_info)
-                .patch(update_contact_info),
+            get(get_contact_info).post(add_contact_info),
+        )
+        .route(
+            "/contact-information/:id",
+            delete(delete_contact_info).patch(update_contact_info),
         )
         .route(
             "/certification",
-            get(get_certifications)
-                .post(add_certification)
-                .delete(delete_certification)
-                .patch(update_certification),
+            get(get_certifications).post(add_certification),
         )
         .route(
-            "/education",
-            get(get_educations)
-                .post(add_education)
-                .delete(delete_education)
-                .patch(update_education),
+            "/certification/:id",
+            delete(delete_certification).patch(update_certification),
         )
+        .route("/education", get(get_educations).post(add_education))
         .route(
-            "/experience",
-            get(get_experiences)
-                .post(add_experience)
-                .delete(delete_experience)
-                .patch(update_experience),
+            "/education/:id",
+            delete(delete_education).patch(update_education),
+        )
+        .route("/experience", get(get_experiences).post(add_experience))
+        .route(
+            "/experience/:id",
+            delete(delete_experience).patch(update_experience),
         )
 }
 

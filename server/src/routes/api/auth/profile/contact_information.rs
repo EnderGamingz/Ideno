@@ -1,4 +1,4 @@
-use axum::extract::State;
+use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
@@ -122,7 +122,6 @@ pub async fn add_contact_information(
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct UpdateContactInformationPayload {
-    id: i32,
     contact_type: String,
     value: String,
 }
@@ -130,11 +129,12 @@ pub struct UpdateContactInformationPayload {
 pub async fn update_contact_information(
     State(state): State<AppState>,
     session: Session,
+    Path(id): Path<i32>,
     Json(payload): Json<UpdateContactInformationPayload>,
 ) -> Result<impl IntoResponse, AppError> {
     let user = check_user(&session, &*state.db).await?;
 
-    contact_info_exists(&state, payload.id, &user).await?;
+    contact_info_exists_for_user_id(&state, id, &user).await?;
 
     let contact_type = ContactType::from_str(&payload.contact_type);
     if contact_type.is_none() {
@@ -148,7 +148,7 @@ pub async fn update_contact_information(
     )
     .bind(payload.contact_type)
     .bind(payload.value)
-    .bind(payload.id)
+    .bind(id)
     .bind(user.id)
     .execute(&*state.db)
     .await
@@ -157,22 +157,17 @@ pub async fn update_contact_information(
     Ok(AppSuccess::UPDATED)
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
-pub struct DeleteContactInformationPayload {
-    id: i32,
-}
-
 pub async fn delete_contact_information(
     State(state): State<AppState>,
     session: Session,
-    Json(payload): Json<DeleteContactInformationPayload>,
+    Path(id): Path<i32>,
 ) -> Result<impl IntoResponse, AppError> {
     let user = check_user(&session, &*state.db).await?;
 
-    contact_info_exists(&state, payload.id, &user).await?;
+    contact_info_exists_for_user_id(&state, id, &user).await?;
 
     sqlx::query("DELETE FROM contact_information WHERE id = $1 AND user_id = $2")
-        .bind(payload.id)
+        .bind(id)
         .bind(user.id)
         .execute(&*state.db)
         .await
@@ -181,7 +176,7 @@ pub async fn delete_contact_information(
     Ok(AppSuccess::DELETED)
 }
 
-async fn contact_info_exists(
+async fn contact_info_exists_for_user_id(
     state: &AppState,
     payload: i32,
     user: &UserModel,

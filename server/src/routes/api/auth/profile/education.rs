@@ -1,4 +1,4 @@
-use axum::extract::State;
+use axum::extract::{Path, State};
 use axum::response::{IntoResponse, Response};
 use axum::Json;
 use tower_sessions::Session;
@@ -75,7 +75,6 @@ pub async fn add_education(
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct UpdateEducationPayload {
-    id: i32,
     school: String,
     degree: Option<String>,
     field: Option<String>,
@@ -86,11 +85,12 @@ pub struct UpdateEducationPayload {
 pub async fn update_education(
     State(state): State<AppState>,
     session: Session,
+    Path(id): Path<i32>,
     Json(payload): Json<UpdateEducationPayload>,
 ) -> Result<impl IntoResponse, AppError> {
     let user = check_user(&session, &state.db).await?;
 
-    education_exists(&state, payload.id, &user).await?;
+    education_exists_for_user_id(&state, id, &user).await?;
 
     sqlx::query("UPDATE educations SET school = $1, degree = $2, field = $3, start_date = $4, end_date = $5 WHERE id = $6 AND user_id = $7")
         .bind(payload.school)
@@ -98,7 +98,7 @@ pub async fn update_education(
         .bind(payload.field)
         .bind(payload.start_date)
         .bind(payload.end_date)
-        .bind(payload.id)
+        .bind(id)
         .bind(user.id)
         .execute(&*state.db)
         .await
@@ -107,22 +107,17 @@ pub async fn update_education(
     Ok(AppSuccess::UPDATED)
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
-pub struct DeleteEducationPayload {
-    id: i32,
-}
-
 pub async fn delete_education(
     State(state): State<AppState>,
     session: Session,
-    Json(payload): Json<DeleteEducationPayload>,
+    Path(id): Path<i32>,
 ) -> Result<impl IntoResponse, AppError> {
     let user = check_user(&session, &state.db).await?;
 
-    education_exists(&state, payload.id, &user).await?;
+    education_exists_for_user_id(&state, id, &user).await?;
 
     sqlx::query("DELETE FROM educations WHERE id = $1 AND user_id = $2")
-        .bind(payload.id)
+        .bind(id)
         .bind(user.id)
         .execute(&*state.db)
         .await
@@ -131,7 +126,7 @@ pub async fn delete_education(
     Ok(AppSuccess::DELETED)
 }
 
-async fn education_exists(
+async fn education_exists_for_user_id(
     state: &AppState,
     payload: i32,
     user: &UserModel,

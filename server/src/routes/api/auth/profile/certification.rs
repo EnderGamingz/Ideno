@@ -1,4 +1,4 @@
-use axum::extract::State;
+use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
@@ -80,7 +80,6 @@ pub async fn add_certification(
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct UpdateCertificationPayload {
-    id: i32,
     name: String,
     organization: String,
     issue_date: Option<String>,
@@ -92,11 +91,12 @@ pub struct UpdateCertificationPayload {
 pub async fn update_certification(
     State(state): State<AppState>,
     session: Session,
+    Path(id): Path<i32>,
     Json(payload): Json<UpdateCertificationPayload>,
 ) -> Result<impl IntoResponse, AppError> {
     let user = check_user(&session, &*state.db).await?;
 
-    certification_exists_for_user_id(&state, payload.id, &user).await?;
+    certification_exists_for_user_id(&state, id, &user).await?;
 
     sqlx::query("UPDATE certification SET name = $1, organization = $2, issue_date = $3, expiration_date = $4, credential_id = $5, credential_url = $6 WHERE id = $7 AND user_id = $8")
         .bind(payload.name)
@@ -105,7 +105,7 @@ pub async fn update_certification(
         .bind(payload.expiration_date)
         .bind(payload.credential_id)
         .bind(payload.credential_url)
-        .bind(payload.id)
+        .bind(id)
         .bind(user.id)
         .execute(&*state.db)
         .await
@@ -114,22 +114,17 @@ pub async fn update_certification(
     Ok(AppSuccess::UPDATED)
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
-pub struct DeleteCertificationPayload {
-    id: i32,
-}
-
 pub async fn delete_certification(
     State(state): State<AppState>,
     session: Session,
-    Json(payload): Json<DeleteCertificationPayload>,
+    Path(id): Path<i32>,
 ) -> Result<impl IntoResponse, AppError> {
     let user = check_user(&session, &*state.db).await?;
 
-    certification_exists_for_user_id(&state, payload.id, &user).await?;
+    certification_exists_for_user_id(&state, id, &user).await?;
 
     sqlx::query("DELETE FROM certification WHERE id = $1 AND user_id = $2")
-        .bind(payload.id)
+        .bind(id)
         .bind(user.id)
         .execute(&*state.db)
         .await
