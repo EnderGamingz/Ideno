@@ -139,5 +139,7 @@ pub async fn delete_account(
         .await
         .map_err(|_| return AppError::InternalError)?;
 
+    session.flush().await.unwrap();
+
     Ok(AppSuccess::DELETED)
 }

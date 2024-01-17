@@ -9,6 +9,6 @@ pub async fn logout(session: Session) -> impl IntoResponse {
         return StatusCode::NOT_MODIFIED.into_response();
     }
 
-    session.delete().await.unwrap();
+    session.flush().await.unwrap();
     StatusCode::OK.into_response()
 }
