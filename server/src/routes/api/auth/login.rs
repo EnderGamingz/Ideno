@@ -7,6 +7,7 @@ use tower_sessions::Session;
 
 use crate::models::user::UserModel;
 use crate::response::error_handling::AppError;
+use crate::response::success_handling::AppSuccess;
 use crate::AppState;
 
 #[derive(Serialize, Deserialize)]
@@ -50,5 +51,8 @@ pub async fn login(
         .await
         .unwrap();
 
-    Ok(StatusCode::OK.into_response())
+    Ok(AppSuccess::OK {
+        data: Some(serde_json::to_string(&user).unwrap()),
+    }
+    .into_response())
 }

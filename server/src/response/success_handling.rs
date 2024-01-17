@@ -4,6 +4,7 @@ use serde::Serialize;
 
 #[derive(Serialize)]
 pub enum AppSuccess {
+    OK { data: Option<String> },
     CREATED { id: Option<i64> },
     DELETED,
     UPDATED,
@@ -15,6 +16,12 @@ impl IntoResponse for AppSuccess {
         let mut body = "".to_string();
 
         match self {
+            Self::OK { data } => {
+                status_code = StatusCode::OK;
+                if let Some(data) = data {
+                    body = data;
+                }
+            }
             Self::CREATED { id } => {
                 status_code = StatusCode::CREATED;
 

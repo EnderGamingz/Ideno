@@ -13,8 +13,9 @@ pub async fn auth(
     session: Session,
 ) -> Result<impl IntoResponse, AppError> {
     if let Some(user_id) = session.get::<String>("user_id").await.unwrap() {
+        println!("{:?}", user_id);
         let result = sqlx::query_as::<_, PublicAuthUserModel>(
-            "SELECT (id, username, email, created_at) FROM users WHERE id = $1",
+            "SELECT id, username, email, created_at FROM users WHERE id = ?",
         )
         .bind(user_id)
         .fetch_one(&*state.db)
@@ -27,5 +28,5 @@ pub async fn auth(
             .unwrap()
             .into_response());
     };
-    Ok(StatusCode::OK.into_response())
+    Err(AppError::NotLoggedIn)
 }

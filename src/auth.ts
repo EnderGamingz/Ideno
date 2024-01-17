@@ -1,20 +1,14 @@
-import NextAuth, { NextAuthConfig } from 'next-auth';
+'use server';
+import { cookies } from 'next/headers';
+import API from '@/lib/api';
 
-export const authOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
-  session: { strategy: 'jwt' },
-  callbacks: {
-    session: async ({ session, token }) => {
-      if (session?.user) {
-        if (token.sub != null) {
-          session.user.id = token.sub;
-        }
-      }
-      return session;
-    },
-  },
-  providers: [],
-} satisfies NextAuthConfig;
+export default async function auth() {
+  const token = cookies().get('id')?.value;
+  if (!token) return undefined;
 
-export const { handlers, auth, signIn, signOut, update } =
-  NextAuth(authOptions);
+  try {
+    return await API.auth();
+  } catch (e) {
+    return undefined;
+  }
+}
