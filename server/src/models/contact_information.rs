@@ -9,3 +9,9 @@ pub struct ContactInformationModel {
     pub value: String,
     pub created_at: String,
 }
+
+#[derive(Clone, FromRow, Debug, Serialize)]
+pub struct PublicContactInformationModel {
+    pub type_field: String,
+    pub value: String,
+}

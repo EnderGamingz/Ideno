@@ -4,7 +4,7 @@ use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use tower_sessions::Session;
 
-use crate::models::user::PublicUserModel;
+use crate::models::user::PublicAuthUserModel;
 use crate::response::error_handling::AppError;
 use crate::AppState;
 
@@ -13,7 +13,7 @@ pub async fn auth(
     session: Session,
 ) -> Result<impl IntoResponse, AppError> {
     if let Some(user_id) = session.get::<String>("user_id").await.unwrap() {
-        let result = sqlx::query_as::<_, PublicUserModel>(
+        let result = sqlx::query_as::<_, PublicAuthUserModel>(
             "SELECT (id, username, email, created_at) FROM users WHERE id = $1",
         )
         .bind(user_id)

@@ -7,9 +7,20 @@ pub struct ExperienceModel {
     pub user_id: i32,
     pub company: String,
     pub title: String,
-    pub start_date: String,
-    pub end_date: String,
-    pub exp_type: String,
-    pub description: String,
+    pub start_date: Option<String>,
+    pub end_date: Option<String>,
+    pub exp_type: Option<String>,
+    pub description: Option<String>,
     pub created_at: String,
 }
+
+#[derive(Clone, FromRow, Debug, Serialize)]
+pub struct PublicExperienceModel {
+    pub company: String,
+    pub title: String,
+    pub start_date: Option<String>,
+    pub end_date: Option<String>,
+    pub exp_type: Option<String>,
+    pub description: Option<String>,
+}
+

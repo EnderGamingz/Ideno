@@ -1,13 +1,13 @@
-use axum::routing::{delete, get, patch, post};
 use axum::Router;
+use axum::routing::{delete, get, patch, post};
 use tower_http::cors::CorsLayer;
 use tower_http::trace;
 use tower_http::trace::TraceLayer;
 use tower_sessions::{MemoryStore, SessionManagerLayer};
 use tracing::Level;
 
-use crate::routes::api::auth;
 use crate::AppState;
+use crate::routes::api::{auth, profile};
 
 fn create_auth_routes() -> Router<AppState> {
     let auth = auth::auth::auth;
@@ -26,11 +26,11 @@ fn create_auth_routes() -> Router<AppState> {
         .route("/logout", get(logout))
         .route("/account", patch(update_account).delete(delete_account))
         .route("/password", patch(update_password))
-        .nest("/profile", create_profile_routes())
-        .nest("/admin", create_admin_routes())
+        .nest("/profile", create_auth_profile_routes())
+        .nest("/admin", create_auth_admin_routes())
 }
 
-fn create_profile_routes() -> Router<AppState> {
+fn create_auth_profile_routes() -> Router<AppState> {
     let update_profile = auth::profile::index::update_profile;
 
     let get_contact_info = auth::profile::contact_information::get_contact_information;
@@ -83,7 +83,7 @@ fn create_profile_routes() -> Router<AppState> {
         )
 }
 
-fn create_admin_routes() -> Router<AppState> {
+fn create_auth_admin_routes() -> Router<AppState> {
     let get_all_users = auth::admin::user::admin_get_users;
     let get_user = auth::admin::user::admin_get_user;
     let delete_user = auth::admin::user::admin_delete_user;
@@ -110,12 +110,20 @@ fn create_admin_routes() -> Router<AppState> {
         )
 }
 
+fn create_public_profile_routes() -> Router<AppState> {
+    let get_public_profile = profile::index::get_public_profile;
+
+    return Router::new().route("/:id", get(get_public_profile));
+}
+
 pub fn router(
     cors: CorsLayer,
     session_layer: SessionManagerLayer<MemoryStore>,
     state: AppState,
 ) -> Router {
-    let api_router = Router::new().nest("/auth", create_auth_routes());
+    let api_router = Router::new()
+        .nest("/auth", create_auth_routes())
+        .nest("/profile", create_public_profile_routes());
 
     Router::new()
         .nest("/api/v1", api_router)

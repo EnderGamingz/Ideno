@@ -12,7 +12,7 @@ pub struct UserModel {
 }
 
 #[derive(Clone, FromRow, Debug, Serialize)]
-pub struct PublicUserModel {
+pub struct PublicAuthUserModel {
     pub id: i32,
     pub username: String,
     pub email: String,
