@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { cookies } from 'next/headers';
+import { PublicAuthUserModel } from '@/types/user';
 
 const api_url = `${process.env.API_URL}/api/${process.env.API_VERSION}/`;
 
@@ -60,7 +61,7 @@ export default class API {
       headers: {
         Cookie: getServersideCookie(),
       },
-    });
+    }).then(res => res.data as PublicAuthUserModel)
   }
 
   static async logout() {
