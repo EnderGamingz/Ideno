@@ -16,7 +16,7 @@ export default async function loginSubmit(_: any, formData: FormData) {
     return { errors: parsed.error.errors };
   }
   try {
-    const response = await API.login(
+    const response = await API.auth.login(
       parsed.data.username,
       parsed.data.password,
     );
@@ -26,7 +26,6 @@ export default async function loginSubmit(_: any, formData: FormData) {
       cookies().set(parsedCookie.split('=')[0], parsedCookie.split('=')[1]);
     }
   } catch (err) {
-    console.log(err);
     return { error: true };
   }
   return { success: true };

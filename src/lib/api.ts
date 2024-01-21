@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { cookies } from 'next/headers';
 import { PublicAuthUserModel } from '@/types/user';
+import { ProfileModel, ProfileUpdatePayload } from '@/types/profile';
 
 const api_url = `${process.env.API_URL}/api/${process.env.API_VERSION}/`;
 
@@ -15,60 +16,64 @@ function getServersideCookie() {
   return '';
 }
 
+const user_api = {
+  async login(username: string, password: string) {
+    return await API.post('auth/login', { username, password });
+  },
+
+  async register(username: string, email: string, password: string) {
+    return await API.post('auth/register', { username, email, password });
+  },
+
+  async auth() {
+    return await API.get('auth').then(res => res.data as PublicAuthUserModel);
+  },
+
+  async logout() {
+    return await API.get('auth/logout');
+  },
+
+  profile: {
+    async update(data: ProfileUpdatePayload) {
+      return await API.patch('auth/profile', data).then(
+        res => res.data as ProfileModel,
+      );
+    },
+  },
+};
+
 export default class API {
   static async get(endpoint: string) {
-    const response = await axios.get(api_url + endpoint, {
+    return await axios.get(api_url + endpoint, {
       headers: {
         Cookie: getServersideCookie(),
       },
     });
-    return await response.data;
   }
 
   static async post(endpoint: string, data: any) {
-    const response = await axios.post(api_url + endpoint, data, {
+    return await axios.post(api_url + endpoint, data, {
       headers: {
         Cookie: getServersideCookie(),
       },
     });
-    return await response.data;
   }
 
-  static async update(endpoint: string, data: any) {
-    const response = await axios.patch(api_url + endpoint, data, {
+  static async patch(endpoint: string, data: any) {
+    return await axios.patch(api_url + endpoint, data, {
       headers: {
         Cookie: getServersideCookie(),
       },
     });
-    return await response.data;
   }
 
   static async delete(endpoint: string) {
-    const response = await axios.delete(api_url + endpoint, {
-      headers: {
-        Cookie: getServersideCookie(),
-      },
-    });
-    return await response.data;
-  }
-
-  static async login(username: string, password: string) {
-    return await axios.post(api_url + 'auth/login', { username, password });
-  }
-
-  static async auth() {
-    return await axios.get(api_url + 'auth', {
-      headers: {
-        Cookie: getServersideCookie(),
-      },
-    }).then(res => res.data as PublicAuthUserModel)
-  }
-
-  static async logout() {
-    return await axios.get(api_url + 'auth/logout', {
+    return await axios.delete(api_url + endpoint, {
       headers: {
         Cookie: getServersideCookie(),
       },
     });
   }
+
+  static auth = user_api;
 }

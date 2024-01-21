@@ -32,3 +32,13 @@ export interface PublicProfileResponse {
   experience: PublicExperienceModel[];
   contactInformation: PublicContactInformationModel[];
 }
+
+export interface ProfileUpdatePayload {
+  first_name?: string;
+  last_name?: string;
+  pronouns?: string;
+  headline?: string;
+  country?: string;
+  city?: string;
+  bio?: string;
+}

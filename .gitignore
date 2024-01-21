@@ -41,3 +41,4 @@ src/app/genre/all/raw.ts
 
 .env
 db
+.swc
