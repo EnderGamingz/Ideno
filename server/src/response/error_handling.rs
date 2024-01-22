@@ -14,6 +14,11 @@ pub enum AppError {
     Forbidden { error: Option<String> },
 }
 
+#[derive(Serialize)]
+pub struct AppResponseBody {
+    pub(crate) message: Option<String>
+}
+
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         let status_code;
@@ -54,6 +59,8 @@ impl IntoResponse for AppError {
             }
         }
 
-        (status_code, body).into_response()
+        let response_body = AppResponseBody { message: Some(body) };
+
+        (status_code, serde_json::to_string(&response_body).unwrap()).into_response()
     }
 }

@@ -1,3 +1,4 @@
+use crate::response::error_handling::AppResponseBody;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use serde::Serialize;
@@ -33,6 +34,10 @@ impl IntoResponse for AppSuccess {
             Self::UPDATED => status_code = StatusCode::ACCEPTED,
         }
 
-        (status_code, body).into_response()
+        let response_body = AppResponseBody {
+            message: Some(body),
+        };
+
+        (status_code, serde_json::to_string(&response_body).unwrap()).into_response()
     }
 }
