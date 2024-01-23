@@ -1,6 +1,11 @@
 import axios from 'axios';
 import { cookies } from 'next/headers';
-import { Created, PublicAuthUserModel } from '@/types/user';
+import {
+  AdminUpdateUserPayload,
+  Created,
+  PublicAuthUserModel,
+  UserModel,
+} from '@/types/user';
 import { ProfileModel, ProfileUpdatePayload } from '@/types/profile';
 import { AccountUpdatePayload, PasswordUpdatePayload } from '@/types/account';
 import { redirect } from 'next/navigation';
@@ -111,6 +116,59 @@ let profile_auth_api = {
   },
 };
 
+const admin_api = {
+  user: {
+    async getAll() {
+      return await API.get('auth/admin/users').then(
+        async res => (await res.json()) as UserModel[],
+      );
+    },
+    async getById(id: number) {
+      return await API.get(`auth/admin/users/${id}`).then(
+        async res => (await res.json()) as UserModel,
+      );
+    },
+    async deleteById(id: number) {
+      return await API.delete(`auth/admin/users/${id}`).then(
+        async res => (await res.json()) as UserModel,
+      );
+    },
+    async updateById(id: number, data: AdminUpdateUserPayload) {
+      return await API.patch(`auth/admin/users/${id}`, data).then(
+        async res => (await res.json()) as UserModel,
+      );
+    },
+  },
+  certification: {
+    async deleteById(id: number) {
+      return await API.delete(`auth/admin/certification/${id}`).then(
+        async res => (await res.json()) as UserModel,
+      );
+    },
+  },
+  education: {
+    async deleteById(id: number) {
+      return await API.delete(`auth/admin/education/${id}`).then(
+        async res => (await res.json()) as UserModel,
+      );
+    },
+  },
+  experience: {
+    async deleteById(id: number) {
+      return await API.delete(`auth/admin/experience/${id}`).then(
+        async res => (await res.json()) as UserModel,
+      );
+    },
+  },
+  contactInformation: {
+    async deleteById(id: number) {
+      return await API.delete(`auth/admin/contact-information/${id}`).then(
+        async res => (await res.json()) as UserModel,
+      );
+    },
+  },
+};
+
 const user_api = {
   async auth() {
     return await API.get('auth', { tags: ['auth'], revalidate: 10 }).then(
@@ -157,6 +215,8 @@ const user_api = {
   },
 
   profile: profile_auth_api,
+
+  admin: admin_api,
 };
 
 export default class API {

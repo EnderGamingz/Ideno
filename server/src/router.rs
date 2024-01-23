@@ -1,13 +1,13 @@
-use axum::Router;
 use axum::routing::{delete, get, patch, post};
+use axum::Router;
 use tower_http::cors::CorsLayer;
 use tower_http::trace;
 use tower_http::trace::TraceLayer;
 use tower_sessions::{MemoryStore, SessionManagerLayer};
 use tracing::Level;
 
-use crate::AppState;
 use crate::routes::api::{auth, profile};
+use crate::AppState;
 
 fn create_auth_routes() -> Router<AppState> {
     let auth = auth::auth::auth;
@@ -76,7 +76,7 @@ fn create_auth_profile_routes() -> Router<AppState> {
             "/education/:id",
             delete(delete_education).patch(update_education),
         )
-        .route("/experi ence", get(get_experiences).post(add_experience))
+        .route("/experience", get(get_experiences).post(add_experience))
         .route(
             "/experience/:id",
             delete(delete_experience).patch(update_experience),

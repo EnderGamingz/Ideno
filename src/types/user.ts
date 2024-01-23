@@ -17,3 +17,9 @@ export interface PublicAuthUserModel {
 export interface Created {
   id?: number;
 }
+
+export interface AdminUpdateUserPayload {
+  username: string;
+  email: string;
+  role: string;
+}
