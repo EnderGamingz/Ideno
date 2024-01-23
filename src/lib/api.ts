@@ -27,6 +27,12 @@ function getServersideCookie() {
 }
 
 let profile_auth_api = {
+  async get() {
+    return await API.get('auth/profile').then(
+      async res => (await res.json()) as ProfileModel,
+    );
+  },
+
   async update(data: ProfileUpdatePayload) {
     return await API.patch('auth/profile', data).then(
       async res => (await res.json()) as ProfileModel,

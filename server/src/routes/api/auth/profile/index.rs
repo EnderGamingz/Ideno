@@ -7,11 +7,40 @@ use serde::{Deserialize, Serialize};
 use tower_sessions::Session;
 
 use crate::auth::check_user::check_user;
-use crate::models::profile::ProfileModel;
+use crate::models::profile::{ProfileModel, PublicProfileModel};
 use crate::response::error_handling::AppError;
 use crate::AppState;
 
+pub async fn get_profile(
+    State(state): State<AppState>,
+    session: Session,
+) -> Result<impl IntoResponse, AppError> {
+    let user = check_user(&session, &*state.db).await?;
+
+    let profile = sqlx::query_as::<_, PublicProfileModel>(
+        "SELECT
+                first_name,
+                last_name,
+                pronouns,
+                headline,
+                country,
+                city,
+                bio
+            FROM profiles where user_id = ?",
+    )
+    .bind(user.id)
+    .fetch_one(&*state.db)
+    .await
+    .map_err(|_| AppError::InternalError)?;
+
+    Ok(Response::builder()
+        .status(StatusCode::OK)
+        .body(Body::from(serde_json::to_string(&profile).unwrap()))
+        .unwrap())
+}
+
 #[derive(Serialize, Deserialize, Debug)]
+//noinspection DuplicatedCode
 pub struct ProfileUpdatePayload {
     pub first_name: Option<String>,
     pub last_name: Option<String>,

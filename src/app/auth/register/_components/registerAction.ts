@@ -26,7 +26,6 @@ export default async function registerSubmit(_: any, formData: FormData) {
       return { error: response.statusText };
     }
   } catch (err) {
-    console.log(err);
     return { error: true };
   }
   redirect('/auth/login');

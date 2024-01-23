@@ -31,6 +31,7 @@ fn create_auth_routes() -> Router<AppState> {
 }
 
 fn create_auth_profile_routes() -> Router<AppState> {
+    let get_profile = auth::profile::index::get_profile;
     let update_profile = auth::profile::index::update_profile;
 
     let get_contact_info = auth::profile::contact_information::get_contact_information;
@@ -54,7 +55,7 @@ fn create_auth_profile_routes() -> Router<AppState> {
     let delete_experience = auth::profile::experience::delete_experience;
 
     Router::new()
-        .route("/", patch(update_profile))
+        .route("/", get(get_profile).patch(update_profile))
         .route(
             "/contact-information",
             get(get_contact_info).post(add_contact_info),

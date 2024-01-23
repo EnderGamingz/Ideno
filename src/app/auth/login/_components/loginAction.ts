@@ -30,7 +30,6 @@ export default async function loginSubmit(_: any, formData: FormData) {
       cookies().set(parsedCookie.split('=')[0], parsedCookie.split('=')[1]);
     }
   } catch (err) {
-    console.log(err);
     return { error: true };
   }
   redirect('/');
