@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { ReactNode } from 'react';
 import { inter } from '@/fonts';
 import { Providers } from '@/app/_components/providers';
+import Header from '@/app/_components/header';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang='en'>
       <Providers>
         <body className={inter.className}>
+          <Header />
           <main>{children}</main>
         </body>
       </Providers>

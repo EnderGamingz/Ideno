@@ -4,11 +4,10 @@ import API from '@/lib/api';
 import { redirect } from 'next/navigation';
 
 export default async function auth() {
+  const token = cookies().get('id')?.value;
+  if (!token) return undefined;
   let user;
   try {
-    const token = cookies().get('id')?.value;
-    if (!token) return undefined;
-
     user = await API.auth.auth();
   } catch (e) {
     console.error(e);
