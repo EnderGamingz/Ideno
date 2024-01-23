@@ -76,7 +76,7 @@ fn create_auth_profile_routes() -> Router<AppState> {
             "/education/:id",
             delete(delete_education).patch(update_education),
         )
-        .route("/experience", get(get_experiences).post(add_experience))
+        .route("/experi ence", get(get_experiences).post(add_experience))
         .route(
             "/experience/:id",
             delete(delete_experience).patch(update_experience),

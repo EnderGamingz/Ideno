@@ -1,6 +1,10 @@
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export async function GET() {
   cookies().delete('id');
-  return new Response(null, { status: 200 });
+
+  redirect('/');
+
+  return new Response('Invalid session cleared', { status: 200 });
 }

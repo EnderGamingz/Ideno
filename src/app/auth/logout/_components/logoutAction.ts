@@ -3,7 +3,7 @@ import API from '@/lib/api';
 import { cookies } from 'next/headers';
 
 export default async function LogoutAction() {
-  await API.user
+  await API.auth
     .logout()
     .then(() => {
       cookies().delete('id');

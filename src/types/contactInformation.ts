@@ -1,4 +1,3 @@
-
 export interface ContactInformationModel {
   id: number;
   userId: number;
@@ -9,5 +8,10 @@ export interface ContactInformationModel {
 
 export interface PublicContactInformationModel {
   typeField: string;
+  value: string;
+}
+
+export interface AddContactInformationPayload {
+  contact_type: string;
   value: string;
 }

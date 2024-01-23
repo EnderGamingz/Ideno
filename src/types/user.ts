@@ -13,3 +13,7 @@ export interface PublicAuthUserModel {
   email: string;
   created_at: string;
 }
+
+export interface Created {
+  id?: number;
+}

@@ -18,3 +18,12 @@ export interface PublicCertificationModel {
   credential_id?: string;
   credential_url?: string;
 }
+
+export interface AddCertificationPayload {
+  name: string;
+  organization: string;
+  issueDate?: string;
+  expirationDate?: string;
+  credentialId?: string;
+  credentialUrl?: string;
+}

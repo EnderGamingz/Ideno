@@ -16,3 +16,11 @@ export interface PublicEducationModel {
   startDate?: string;
   endDate?: string;
 }
+
+export interface AddEducationPayload {
+  school: string;
+  degree?: string;
+  field?: string;
+  startDate?: string;
+  endDate?: string;
+}

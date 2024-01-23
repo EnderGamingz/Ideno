@@ -18,3 +18,12 @@ export interface PublicExperienceModel {
   expType?: string;
   description?: string;
 }
+
+export interface AddExperiencePayload {
+  company: string;
+  title: string;
+  start_date?: string;
+  end_date?: string;
+  exp_type?: string;
+  description?: string;
+}
