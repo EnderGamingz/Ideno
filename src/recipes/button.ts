@@ -5,7 +5,6 @@ export const button = cva({
   base: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
     borderRadius: 'sm',
     py: 1,
     px: 4,

@@ -13,6 +13,7 @@ export default async function Header() {
         display: 'grid',
         alignItems: 'center',
         p: 2,
+        px: 4,
         gridTemplateColumns: 'repeat(3, 1fr)',
         gap: '1rem',
         borderBottom: '1px solid',
