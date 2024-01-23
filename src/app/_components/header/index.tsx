@@ -17,6 +17,8 @@ export default async function Header() {
         gap: '1rem',
         borderBottom: '1px solid',
         bct: 'black/85',
+        zIndex: 10,
+        bg: 'background',
       }}>
       <styled.nav
         css={{
@@ -50,7 +52,7 @@ export default async function Header() {
               Profile
             </Link>
             <Link
-              className={button({ variant: 'outline', type: 'icon' })}
+              className={button({ variant: 'outline', contentType: 'icon' })}
               href={'/auth/logout'}>
               <Icon.Logout />
             </Link>

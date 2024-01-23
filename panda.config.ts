@@ -45,15 +45,21 @@ let colors = {
   },
 
   text: {
+    primary: { value: '#0f1f1f' },
+    secondary: { value: '#161d2c' },
+    success: { value: '#101f0f' },
+    error: { value: '#1f0f0f' },
+    warning: { value: '#1f190f' },
     hover: { value: '#152f2f' },
   },
 
   // Surface and backgrounds
   background: { value: '#f7fdfd' },
+
   surface: {
-    DEFAULT: { value: '#3A3B5F' },
-    hover: { value: '#4e4e6c' },
-    muted: { value: '#2A2B4F' },
+    DEFAULT: { value: '#faffff' },
+    hover: { value: '#C3D0D0' },
+    muted: { value: '#A2B6B6' },
   },
   surfaceAlt: {
     DEFAULT: { value: '#212121' },

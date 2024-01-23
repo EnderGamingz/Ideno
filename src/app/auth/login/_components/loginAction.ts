@@ -3,7 +3,6 @@
 import { z } from 'zod';
 import API from '@/lib/api';
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 const schema = z.object({
   username: z.string().min(1),
@@ -32,5 +31,5 @@ export default async function loginSubmit(_: any, formData: FormData) {
   } catch (err) {
     return { error: true };
   }
-  redirect('/');
+  return { success: true };
 }

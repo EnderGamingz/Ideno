@@ -27,7 +27,7 @@ export const button = cva({
       outline: {
         outline: '2px solid token(colors.primary)',
         outlineOffset: '-1px',
-        bg: 'white',
+        bg: 'transparent',
         color: 'primary',
         _hover: {
           bg: 'primary.hover',
@@ -35,11 +35,29 @@ export const button = cva({
         },
       },
     },
-    type: {
+    contentType: {
       icon: {
         px: 2,
         py: 1.5,
         rounded: 'md',
+      },
+    },
+    pending: {
+      true: {
+        bg: 'primary',
+        color: 'text.primary',
+        _hover: {
+          bg: 'primary',
+          color: 'text.primary',
+        },
+        cursor: 'wait',
+        filter: 'grayscale(80%)',
+      },
+    },
+    disabled: {
+      true: {
+        opacity: 0.5,
+        cursor: 'not-allowed',
       },
     },
   },
