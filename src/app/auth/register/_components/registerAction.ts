@@ -2,36 +2,32 @@
 
 import { z } from 'zod';
 import API from '@/lib/api';
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 const schema = z.object({
   username: z.string().min(1),
+  email: z.string().min(1).email(),
   password: z.string().min(1),
 });
 
-export default async function loginSubmit(_: any, formData: FormData) {
+export default async function registerSubmit(_: any, formData: FormData) {
   const objectFromFormData = Object.fromEntries(formData.entries());
   const parsed = schema.safeParse(objectFromFormData);
   if (!parsed.success) {
     return { errors: parsed.error.errors };
   }
   try {
-    const response = await API.auth.login(
+    const response = await API.auth.register(
       parsed.data.username,
+      parsed.data.email,
       parsed.data.password,
     );
     if (!response.ok) {
       return { error: response.statusText };
     }
-    let cookieValues = response.headers.getSetCookie();
-    for (const cookie of cookieValues) {
-      const parsedCookie = cookie.split(';')[0];
-      cookies().set(parsedCookie.split('=')[0], parsedCookie.split('=')[1]);
-    }
   } catch (err) {
     console.log(err);
     return { error: true };
   }
-  redirect('/');
+  redirect('/auth/login');
 }

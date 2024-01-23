@@ -1,10 +1,10 @@
 'use client';
 
 import { useFormState } from 'react-dom';
-import loginSubmit from '@/app/auth/login/_components/loginAction';
+import registerSubmit from '@/app/auth/register/_components/registerAction';
 
-export function LoginForm() {
-  const [state, formAction] = useFormState(loginSubmit, {
+export function RegisterForm() {
+  const [state, formAction] = useFormState(registerSubmit, {
     errors: undefined,
     success: undefined,
     error: undefined,
@@ -24,9 +24,14 @@ export function LoginForm() {
       {state.success}
       <form action={formAction}>
         <div>
-          <label htmlFor='username'>Email</label>
+          <label htmlFor='username'>Username</label>
           <input type='text' name='username' id='username' />
           {isError('username') && <span>This field is required</span>}
+        </div>
+        <div>
+          <label htmlFor='email'>Email</label>
+          <input type='email' name='email' id='email' />
+          {isError('email') && <span>This field is required</span>}
         </div>
         <div>
           <label htmlFor='password'>Password</label>

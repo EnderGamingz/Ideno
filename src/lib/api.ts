@@ -219,6 +219,14 @@ const user_api = {
   admin: admin_api,
 };
 
+const profile_public_api = {
+  async getByUsername(name: string) {
+    return await API.get(`profile/${name}`).then(
+      async res => (await res.json()) as ProfileModel,
+    );
+  },
+};
+
 export default class API {
   static async get(endpoint: string, options?: any) {
     return await fetch(api_url + endpoint, {
@@ -229,27 +237,26 @@ export default class API {
       next: options,
     });
   }
-
   static async post(endpoint: string, data: any) {
     return await fetch(api_url + endpoint, {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         Cookie: getServersideCookie(),
       },
       body: JSON.stringify(data),
     });
   }
-
   static async patch(endpoint: string, data: any) {
     return await fetch(api_url + endpoint, {
       method: 'PATCH',
       headers: {
+        'Content-Type': 'application/json',
         Cookie: getServersideCookie(),
       },
       body: JSON.stringify(data),
     });
   }
-
   static async delete(endpoint: string) {
     return await fetch(api_url + endpoint, {
       method: 'DELETE',
@@ -260,4 +267,5 @@ export default class API {
   }
 
   static auth = user_api;
+  static profile = profile_public_api;
 }
