@@ -20,8 +20,12 @@ export default async function loginSubmit(_: any, formData: FormData) {
       parsed.data.username,
       parsed.data.password,
     );
+    const json = await response.json().catch(() => {
+      return { message: 'An unexpected error has occurred.' };
+    });
+
     if (!response.ok) {
-      return { error: response.statusText };
+      return { error: json.message || response.statusText };
     }
     let cookieValues = response.headers.getSetCookie();
     for (const cookie of cookieValues) {
@@ -29,7 +33,7 @@ export default async function loginSubmit(_: any, formData: FormData) {
       cookies().set(parsedCookie.split('=')[0], parsedCookie.split('=')[1]);
     }
   } catch (err) {
-    return { error: true };
+    return { error: 'Something went wrong' };
   }
   return { success: true };
 }

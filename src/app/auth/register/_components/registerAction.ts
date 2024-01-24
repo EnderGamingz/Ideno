@@ -22,11 +22,12 @@ export default async function registerSubmit(_: any, formData: FormData) {
       parsed.data.email,
       parsed.data.password,
     );
+    const json = await response.json().catch();
     if (!response.ok) {
-      return { error: response.statusText };
+      return { error: json.message || response.statusText };
     }
   } catch (err) {
-    return { error: true };
+    return { error: 'Something went wrong' };
   }
   redirect('/auth/login');
 }

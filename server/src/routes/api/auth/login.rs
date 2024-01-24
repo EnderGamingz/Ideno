@@ -35,7 +35,9 @@ pub async fn login(
     let user = match result {
         Some(user) => user,
         None => {
-            return Ok(StatusCode::UNAUTHORIZED.into_response());
+            return Err(AppError::Forbidden {
+                error: Some("Invalid credentials".to_string()),
+            });
         }
     };
 
@@ -43,7 +45,9 @@ pub async fn login(
         bcrypt::verify(payload.password, &*user.password).map_err(|_| AppError::InternalError)?;
 
     if !is_password_valid {
-        return Ok(StatusCode::UNAUTHORIZED.into_response());
+        return Err(AppError::Forbidden {
+            error: Some("Invalid credentials".to_string()),
+        });
     }
 
     session

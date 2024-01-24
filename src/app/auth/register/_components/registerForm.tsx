@@ -1,7 +1,16 @@
 'use client';
 
-import { useFormState } from 'react-dom';
+import { useFormState, useFormStatus } from 'react-dom';
 import registerSubmit from '@/app/auth/register/_components/registerAction';
+import Button from '@/recipes/button';
+import Icon from '@/app/_components/icon';
+import { Box } from '@/styling/jsx';
+import { BackgroundBlobs } from '@/app/_components/backgroundBlobs';
+import React from 'react';
+import {
+  CredentialForm,
+  CredentialInput,
+} from '@/app/auth/login/_components/loginForm';
 
 export function RegisterForm() {
   const [state, formAction] = useFormState(registerSubmit, {
@@ -18,28 +27,41 @@ export function RegisterForm() {
     }
   };
 
+  console.log(state.error);
+
   return (
-    <>
-      {state.error ? 'Error' : null}
-      {state.success}
-      <form action={formAction}>
-        <div>
-          <label htmlFor='username'>Username</label>
-          <input type='text' name='username' id='username' />
-          {isError('username') && <span>This field is required</span>}
-        </div>
-        <div>
-          <label htmlFor='email'>Email</label>
-          <input type='email' name='email' id='email' />
-          {isError('email') && <span>This field is required</span>}
-        </div>
-        <div>
-          <label htmlFor='password'>Password</label>
-          <input type='password' name='password' id='password' />
-          {isError('password') && <span>This field is required</span>}
-        </div>
-        <button type='submit'>Submit</button>
-      </form>
-    </>
+    <Box
+      css={{
+        display: 'grid',
+        placeItems: 'center',
+      }}>
+      <BackgroundBlobs />
+      <CredentialForm
+        title={'Register'}
+        formSubmitHandler={formAction}
+        state={state}>
+        <CredentialInput
+          text='Username'
+          type='username'
+          name='username'
+          inputId='username'
+          error={isError('username')}
+        />
+        <CredentialInput
+          text='Email'
+          type='email'
+          name='email'
+          inputId='email'
+          error={isError('email')}
+        />
+        <CredentialInput
+          text='Password'
+          type='password'
+          name='password'
+          inputId='password'
+          error={isError('password')}
+        />
+      </CredentialForm>
+    </Box>
   );
 }

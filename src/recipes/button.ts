@@ -33,6 +33,16 @@ export const button = cva({
           color: 'text.hover',
         },
       },
+      secondary: {
+        bg: 'transparent',
+        color: 'text',
+        outline: '1px solid',
+        oct: 'black/80',
+        _hover: {
+          bg: 'secondary.hover',
+          color: 'text.hover',
+        },
+      },
     },
     contentType: {
       icon: {
