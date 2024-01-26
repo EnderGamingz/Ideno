@@ -57,7 +57,7 @@ let colors = {
   background: { value: '#f7fdfd' },
 
   surface: {
-    DEFAULT: { value: '#faffff' },
+    DEFAULT: { value: '#ebfcfc' },
     hover: { value: '#C3D0D0' },
     muted: { value: '#A2B6B6' },
   },

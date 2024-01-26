@@ -3,7 +3,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { button } from '@/recipes/button';
 import auth from 'auth';
-import Icon from '@/app/_components/icon';
 import LogoutButton from '@/app/_components/header/logoutButton';
 
 export default async function Header() {
@@ -50,7 +49,7 @@ export default async function Header() {
       <HStack gap={2} justifyContent={'flex-end'}>
         {user ? (
           <>
-            <Link className={button()} href={'/auth/profile'}>
+            <Link className={button()} href={`/profile/${user.username}`}>
               Profile
             </Link>
             <LogoutButton />

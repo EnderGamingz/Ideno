@@ -1,32 +1,52 @@
 @layer reset, base, tokens, recipes, utilities;
 
 body {
-  scroll-behavior: smooth;
+    scroll-behavior: smooth;
 }
 
 .loading {
-  background: linear-gradient(110deg, #1f1f1f 8%, #171717 18%, #1f1f1f 33%);
-  border-radius: 5px;
-  background-size: 200% 100%;
-  animation: 1.5s shine linear infinite;
+    background: linear-gradient(110deg, #1f1f1f 8%, #171717 18%, #1f1f1f 33%);
+    border-radius: 5px;
+    background-size: 200% 100%;
+    animation: 1.5s shine linear infinite;
 }
 
 @keyframes shine {
-  to {
-    background-position-x: -200%;
-  }
+    to {
+        background-position-x: -200%;
+    }
 }
 
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 6px
+    width: 4px;
+    height: 6px
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #868686;
-  border-radius: 10px
+    background-color: #868686;
+    border-radius: 10px
 }
 
 ::-webkit-scrollbar-track {
-  background-color: transparent
+    background-color: transparent
+}
+
+.transition-200 {
+    transition: all 0.2s ease-in-out
+}
+
+.scale-95 {
+    transform: scale(0.95)
+}
+
+.scale-100 {
+    transform: scale(1)
+}
+
+.opacity-1 {
+    opacity: 1;
+}
+
+.opacity-0 {
+    opacity: 0;
 }

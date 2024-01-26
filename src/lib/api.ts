@@ -6,7 +6,12 @@ import {
   PublicAuthUserModel,
   UserModel,
 } from '@/types/user';
-import { ProfileModel, ProfileUpdatePayload } from '@/types/profile';
+import {
+  ProfileModel,
+  ProfileUpdatePayload,
+  PublicProfileModel,
+  PublicProfileResponse,
+} from '@/types/profile';
 import { AccountUpdatePayload, PasswordUpdatePayload } from '@/types/account';
 import { redirect } from 'next/navigation';
 import {
@@ -228,7 +233,7 @@ const user_api = {
 const profile_public_api = {
   async getByUsername(name: string) {
     return await API.get(`profile/${name}`).then(
-      async res => (await res.json()) as ProfileModel,
+      async res => (await res.json()) as PublicProfileResponse,
     );
   },
 };

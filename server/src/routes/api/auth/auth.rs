@@ -13,7 +13,6 @@ pub async fn auth(
     session: Session,
 ) -> Result<impl IntoResponse, AppError> {
     if let Some(user_id) = session.get::<String>("user_id").await.unwrap() {
-        println!("{:?}", user_id);
         let result = sqlx::query_as::<_, PublicAuthUserModel>(
             "SELECT id, username, email, created_at FROM users WHERE id = ?",
         )

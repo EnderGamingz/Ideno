@@ -1,29 +1,63 @@
-import { ReactNode } from 'react';
+import { Fragment, ReactNode } from 'react';
 import { Transition } from '@headlessui/react';
 import { css } from '@/styling/css';
+import { Box } from '@/styling/jsx';
 
 export default function TransitionWrapper({
   children,
-  maxW,
 }: {
   children: ReactNode;
-  maxW?: string;
 }) {
   return (
     <Transition
       className={css({
-        maxW,
         pos: 'absolute',
         top: '2.5rem',
         right: 0,
       })}
-      enter={css({ transition: 'all 0.2s ease-in-out' })}
-      enterFrom={css({ transform: 'scale(0.95)', opacity: 0 })}
-      enterTo={css({ transform: 'scale(1)', opacity: 1 })}
-      leave={css({ transition: 'all 0.2s ease-in-out' })}
-      leaveFrom={css({ transform: 'scale(1)', opacity: 1 })}
-      leaveTo={css({ transform: 'scale(0.95)', opacity: 0 })}>
+      enter={'transition-200'}
+      enterFrom={'opacity-0 scale-95'}
+      enterTo={'opacity-100 scale-100'}
+      leave={'transition-200'}
+      leaveFrom={'opacity-100 scale-100'}
+      leaveTo={'opacity-0 scale-95'}>
       {children}
     </Transition>
+  );
+}
+
+export function TransitionChildWrapper({ children }: { children: ReactNode }) {
+  return (
+    <Transition.Child
+      as={Fragment}
+      enter={'transition-200'}
+      enterFrom={'opacity-0 scale-95'}
+      enterTo={'opacity-100 scale-100'}
+      leave={'transition-200'}
+      leaveFrom={'opacity-100 scale-100'}
+      leaveTo={'opacity-0 scale-95'}>
+      {children}
+    </Transition.Child>
+  );
+}
+
+export function TransitionBackdrop() {
+  return (
+    <Transition.Child
+      as={Fragment}
+      enter={'transition-200'}
+      enterFrom={'opacity-0'}
+      enterTo={'opacity-1'}
+      leave={'transition-200'}
+      leaveFrom={'opacity-1'}
+      leaveTo={'opacity-0'}>
+      <Box
+        css={{
+          pos: 'fixed',
+          inset: 0,
+          bgt: 'black/70',
+        }}
+      />
+    </Transition.Child>
   );
 }
