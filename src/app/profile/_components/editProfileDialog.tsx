@@ -12,15 +12,28 @@ import { css } from '@/styling/css';
 import { DialogDescription, DialogTitle } from '@/app/_components/Dialog';
 import { HStack, Stack, styled } from '@/styling/jsx';
 import { ProfileUpdatePayload } from '@/types/profile';
+import { stack } from '@/styling/patterns';
+import profileUpdateAction from '@/app/profile/_components/profileUpdateAction';
+import { useRouter } from 'next/navigation';
+import { SelectPronouns } from '@/app/profile/_components/selectPronouns';
+
+export const inputStyles = {
+  outline: '1px solid',
+  oct: 'primary/85',
+  rounded: 'md',
+  shadow: 'md',
+  px: 2,
+  py: 1,
+  resize: 'none',
+};
 
 export default function EditProfileDialog({
-  userId,
   profile,
 }: {
-  userId: number;
   profile: ProfileUpdatePayload;
 }) {
-  const [isOpen, setIsOpen] = useState(true);
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <>
       <Button
@@ -32,22 +45,20 @@ export default function EditProfileDialog({
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           onClose={() => {}}
-          className={css({
-            zIndex: 10,
+          className={stack({
+            pos: 'fixed',
             inset: 0,
+            zIndex: 10,
+            justify: 'center',
+            alignItems: 'center',
+            p: 5,
           })}>
           <TransitionBackdrop />
           <TransitionChildWrapper>
             <Dialog.Panel
               className={css({
-                pos: 'fixed',
-                top: '2rem',
-                right: '50%',
-                transform: 'translateX(50%)',
                 zIndex: 10,
                 bg: 'surface',
-                outline: '1px solid',
-                oct: 'black/85',
                 rounded: 'md',
                 shadow: 'md',
                 px: 4,
@@ -59,7 +70,12 @@ export default function EditProfileDialog({
               <DialogDescription>
                 Here you can update your profile details
               </DialogDescription>
-              <form>
+              <form
+                action={async data => {
+                  await profileUpdateAction(data);
+                  router.refresh();
+                  setIsOpen(false);
+                }}>
                 <Stack>
                   <EditField
                     label={'First Name'}
@@ -76,23 +92,27 @@ export default function EditProfileDialog({
                     fieldId={'headline'}
                     value={profile.headline}
                   />
+                  <Stack flexDirection={{ base: 'column', sm: 'row' }}>
+                    <EditField
+                      label={'City'}
+                      fieldId={'city'}
+                      value={profile.city}
+                    />
+                    <EditField
+                      label={'Country'}
+                      fieldId={'country'}
+                      value={profile.country}
+                    />
+                  </Stack>
+                  <SelectPronouns initial={profile.pronouns} />
                   <EditField
-                    label={'City'}
-                    fieldId={'city'}
-                    value={profile.city}
-                  />
-                  <EditField
-                    label={'Country'}
-                    fieldId={'country'}
-                    value={profile.country}
-                  />
-                  <EditField
+                    type={'textarea'}
                     label={'Bio'}
                     fieldId={'bio'}
                     value={profile.bio}
                   />
                 </Stack>
-                <HStack justify={'flex-end'} mt={1}>
+                <HStack justify={'flex-end'} mt={5}>
                   <Button
                     variant={'secondary'}
                     type={'button'}
@@ -116,36 +136,36 @@ function EditField({
   label,
   value,
   fieldId,
+  type,
 }: {
   label: string;
   value?: string;
   fieldId: string;
+  type?: string;
 }) {
   return (
-    <Stack>
-      <styled.label
-        htmlFor={label}
-        css={{
-          mb: 1,
-          color: 'text',
-        }}>
+    <Stack gap={0}>
+      <styled.label htmlFor={label} mb={1} color={'text'}>
         {label}
       </styled.label>
-      <styled.input
-        type={'text'}
-        name={fieldId}
-        id={label}
-        defaultValue={value}
-        css={{
-          bg: 'surface',
-          outline: '1px solid',
-          oct: 'black/85',
-          rounded: 'md',
-          shadow: 'md',
-          px: 2,
-          py: 1,
-        }}
-      />
+      {type === 'textarea' ? (
+        <styled.textarea
+          name={fieldId}
+          id={label}
+          defaultValue={value}
+          rows={5}
+          cols={30}
+          css={inputStyles}
+        />
+      ) : (
+        <styled.input
+          type={'text'}
+          name={fieldId}
+          id={label}
+          defaultValue={value}
+          css={inputStyles}
+        />
+      )}
     </Stack>
   );
 }

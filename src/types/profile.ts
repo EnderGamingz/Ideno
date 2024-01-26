@@ -5,8 +5,8 @@ import { PublicContactInformationModel } from '@/types/contactInformation';
 
 export interface ProfileModel {
   userId: number;
-  firstName?: string;
-  lastName?: string;
+  first_name?: string;
+  last_name?: string;
   pronouns?: string;
   headline?: string;
   country?: string;
@@ -16,8 +16,8 @@ export interface ProfileModel {
 }
 
 export interface PublicProfileModel {
-  firstName?: string;
-  lastName?: string;
+  first_name?: string;
+  last_name?: string;
   pronouns?: string;
   headline?: string;
   country?: string;
