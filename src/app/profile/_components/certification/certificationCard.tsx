@@ -1,0 +1,95 @@
+import { PublicCertificationModel } from '@/types/certification';
+import { Card } from '@/app/profile/_components/card';
+import AddCertificationDialog from '@/app/profile/_components/certification/addCertificationDialog';
+import { Box, HStack, styled } from '@/styling/jsx';
+import ConditionalWrapper from '@/app/_components/ConditionalWrapper';
+import Icon from '@/app/_components/icon';
+import ExternalLink from '@/app/_components/ExternalLink';
+
+export function CertificationCard({
+  data,
+}: {
+  data: PublicCertificationModel[];
+}) {
+  return (
+    <Card>
+      <HStack justify={'space-between'}>
+        <h2>Certifications</h2>
+        <AddCertificationDialog />
+      </HStack>
+      {data.map((item, i) => (
+        <Certification
+          data={item}
+          key={`${item.name + item.organization}${i}`}
+          last={data.length - 1 === i}
+        />
+      ))}
+    </Card>
+  );
+}
+
+function Certification({
+  data,
+  last,
+}: {
+  data: PublicCertificationModel;
+  last?: boolean;
+}) {
+  return (
+    <Box
+      css={{
+        borderBottom: !last ? '1px solid' : 'none',
+        bct: 'black/90',
+        p: 2,
+        '& a': {
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          textDecoration: 'underline',
+        },
+      }}>
+      <ConditionalWrapper
+        condition={!!data.credential_url}
+        wrapper={c => (
+          <ExternalLink href={data.credential_url!}>
+            {c}
+            <Icon.OpenInNew size={16} />
+          </ExternalLink>
+        )}>
+        <styled.h3 fontSize={'1.1rem'} fontWeight={'semibold'}>
+          {data.name}
+        </styled.h3>
+      </ConditionalWrapper>
+
+      <styled.p>{data.organization}</styled.p>
+      <Box
+        css={{
+          ct: 'black/50',
+          fontSize: '0.8rem',
+        }}>
+        <HStack>
+          {data.issue_date && (
+            <styled.span>
+              Issued{' '}
+              {new Date(data.issue_date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+              })}
+            </styled.span>
+          )}
+          {data.issue_date && data.expiration_date && '•'}
+          {data.expiration_date && (
+            <styled.span>
+              Expires{' '}
+              {new Date(data.expiration_date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+              })}
+            </styled.span>
+          )}
+        </HStack>
+        {data.credential_id && <span>ID: {data.credential_id}</span>}
+      </Box>
+    </Box>
+  );
+}

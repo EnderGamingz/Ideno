@@ -20,7 +20,7 @@ export default async function profileUpdateAction(formData: FormData) {
     return { errors: parsed.error.errors };
   }
 
-  API.auth.profile
+  return API.auth.profile
     .update(parsed.data)
     .then(() => {
       return { success: true };

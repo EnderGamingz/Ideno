@@ -9,7 +9,13 @@ export function Card({ children }: { children: ReactNode }) {
       shadow={'md'}
       rounded={'lg'}
       pos={{ base: 'static', md: 'sticky' }}
-      top={3}>
+      top={3}
+      css={{
+        '& > * > h2': {
+          fontSize: '1.2rem',
+          fontWeight: 480,
+        },
+      }}>
       {children}
     </Box>
   );

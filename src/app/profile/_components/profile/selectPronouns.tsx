@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { styled } from '@/styling/jsx';
-import { inputStyles } from '@/app/profile/_components/edit/editProfileDialog';
+import { Input, Select } from '@/recipes/input';
 
 export function SelectPronouns({ initial }: { initial?: string }) {
   const pronounOptions = [
@@ -30,8 +29,7 @@ export function SelectPronouns({ initial }: { initial?: string }) {
         value={pronouns === 'custom' && customValue ? customValue : pronouns}
       />
       <label htmlFor='_pronouns'>Pronouns</label>
-      <styled.select
-        css={inputStyles}
+      <Select
         name='_pronouns'
         id='_pronouns'
         value={pronouns}
@@ -43,11 +41,10 @@ export function SelectPronouns({ initial }: { initial?: string }) {
           </option>
         ))}
         <option value='custom'>Custom</option>
-      </styled.select>
+      </Select>
 
       {pronouns === 'custom' && (
-        <styled.input
-          css={inputStyles}
+        <Input
           type='text'
           name='_pronouns'
           id='_pronouns'

@@ -1,7 +1,7 @@
 import { PublicProfileResponse } from '@/types/profile';
 import { Card } from '@/app/profile/_components/card';
 import { Box, Divider, HStack, styled } from '@/styling/jsx';
-import EditProfileDialog from '@/app/profile/_components/edit/editProfileDialog';
+import EditProfileDialog from '@/app/profile/_components/profile/editProfileDialog';
 
 export function ProfileCard({
   username,
