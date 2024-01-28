@@ -50,6 +50,11 @@ export const button = cva({
         py: 1.5,
         rounded: 'md',
       },
+      iconRound: {
+        p: 2,
+        aspectRatio: 1,
+        rounded: 'full',
+      },
     },
     pending: {
       true: {
@@ -67,6 +72,13 @@ export const button = cva({
       true: {
         opacity: 0.5,
         cursor: 'not-allowed',
+      },
+    },
+    size: {
+      small: {
+        px: 2,
+        py: 1,
+        fontSize: '0.8rem',
       },
     },
   },

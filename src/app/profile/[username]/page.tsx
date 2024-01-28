@@ -16,7 +16,11 @@ export default async function Page({
     <Grid columns={{ base: 1, md: 2 }} p={5} gap={5} alignItems={'flex-start'}>
       <ProfileCard data={userProfile} username={username} user={user} />
       <Stack>
-        <CertificationCard data={userProfile.certification} />
+        <CertificationCard
+          username={username}
+          user={user}
+          data={userProfile.certification}
+        />
       </Stack>
     </Grid>
   );

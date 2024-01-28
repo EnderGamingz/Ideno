@@ -88,6 +88,16 @@ const Icon = {
       <path d='M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z' />
     </svg>
   ),
+  Forward: ({ size = 20 }: { size?: number }) => (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      height={size}
+      width={size}
+      viewBox='0 -960 960 960'
+      fill='currentColor'>
+      <path d='M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z' />
+    </svg>
+  ),
 };
 
 export default Icon;

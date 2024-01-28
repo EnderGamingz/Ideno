@@ -5,25 +5,43 @@ import { Box, HStack, styled } from '@/styling/jsx';
 import ConditionalWrapper from '@/app/_components/ConditionalWrapper';
 import Icon from '@/app/_components/icon';
 import ExternalLink from '@/app/_components/ExternalLink';
+import Link from 'next/link';
+import { button } from '@/recipes/button';
+import { PublicAuthUserModel } from '@/types/user';
 
 export function CertificationCard({
+  username,
+  user,
   data,
 }: {
+  username: string;
+  user: PublicAuthUserModel;
   data: PublicCertificationModel[];
 }) {
+  const isCurrentUser = username === user.username;
+  if (!isCurrentUser && data.length === 0) return null;
   return (
     <Card>
       <HStack justify={'space-between'}>
         <h2>Certifications</h2>
-        <AddCertificationDialog />
+        {isCurrentUser && <AddCertificationDialog />}
       </HStack>
-      {data.map((item, i) => (
-        <Certification
-          data={item}
-          key={`${item.name + item.organization}${i}`}
-          last={data.length - 1 === i}
-        />
-      ))}
+      <Box mb={2}>
+        {data.map((item, i) => (
+          <Certification
+            data={item}
+            key={`${item.name + item.organization}${i}`}
+            last={data.length - 1 === i}
+          />
+        ))}
+      </Box>
+      {data.length > 0 && (
+        <Link
+          className={button({ variant: 'secondary', size: 'small' })}
+          href={username + '/certifications'}>
+          Show All Certifications <Icon.Forward />
+        </Link>
+      )}
     </Card>
   );
 }
@@ -60,13 +78,8 @@ function Certification({
           {data.name}
         </styled.h3>
       </ConditionalWrapper>
-
       <styled.p>{data.organization}</styled.p>
-      <Box
-        css={{
-          ct: 'black/50',
-          fontSize: '0.8rem',
-        }}>
+      <Box ct={'black/50'} fontSize={'0.8rem'}>
         <HStack>
           {data.issue_date && (
             <styled.span>

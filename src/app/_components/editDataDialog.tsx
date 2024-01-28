@@ -33,8 +33,8 @@ export default function EditDataDialog({
   return (
     <>
       <Button
-        variant={'outline'}
         contentType={'icon'}
+        variant={'outline'}
         onClick={() => setIsOpen(true)}>
         {button}
       </Button>

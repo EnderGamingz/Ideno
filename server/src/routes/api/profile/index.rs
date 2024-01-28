@@ -52,7 +52,8 @@ pub async fn get_public_profile(
                 credential_id,
                 credential_url
               FROM certification
-              WHERE user_id = ?",
+              WHERE user_id = ?
+              LIMIT 3",
     )
     .bind(user_id.unwrap())
     .fetch_all(&*state.db)
@@ -67,7 +68,8 @@ pub async fn get_public_profile(
                 start_date,
                 end_date
             FROM educations
-            WHERE user_id = ?",
+            WHERE user_id = ?
+            LIMIT 3",
     )
     .fetch_all(&*state.db)
     .await
@@ -82,7 +84,8 @@ pub async fn get_public_profile(
                 exp_type,
                 description
             FROM experiences
-            WHERE user_id = ?",
+            WHERE user_id = ?
+            LIMIT 3",
     )
     .fetch_all(&*state.db)
     .await
