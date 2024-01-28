@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { styled } from '@/styling/jsx';
-import { inputStyles } from '@/app/profile/_components/editProfileDialog';
+import { inputStyles } from '@/app/profile/_components/edit/editProfileDialog';
 
 export function SelectPronouns({ initial }: { initial?: string }) {
   const pronounOptions = [

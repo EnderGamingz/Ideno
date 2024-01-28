@@ -13,9 +13,9 @@ import { DialogDescription, DialogTitle } from '@/app/_components/Dialog';
 import { HStack, Stack, styled } from '@/styling/jsx';
 import { ProfileUpdatePayload } from '@/types/profile';
 import { stack } from '@/styling/patterns';
-import profileUpdateAction from '@/app/profile/_components/profileUpdateAction';
+import profileUpdateAction from '@/app/profile/_components/edit/profileUpdateAction';
 import { useRouter } from 'next/navigation';
-import { SelectPronouns } from '@/app/profile/_components/selectPronouns';
+import { SelectPronouns } from '@/app/profile/_components/edit/selectPronouns';
 
 export const inputStyles = {
   outline: '1px solid',
