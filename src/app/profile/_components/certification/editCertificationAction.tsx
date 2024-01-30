@@ -2,19 +2,9 @@
 
 import { z } from 'zod';
 import API from '@/lib/api';
-
-const customDate = z.string().refine(
-  value => {
-    if (value.length === 0) return true;
-    return !isNaN(Date.parse(value));
-  },
-  {
-    message: 'Invalid date format',
-  },
-);
+import { customDate } from '@/utils/parsing';
 
 const schema = z.object({
-  id: z.number(),
   name: z.string().min(1),
   organization: z.string().min(1),
   issue_date: customDate.optional(),
@@ -23,7 +13,10 @@ const schema = z.object({
   credential_url: z.string().optional(),
 });
 
-export default async function editCertificationAction(formData: FormData) {
+export default async function editCertificationAction(
+  formData: FormData,
+  id: number,
+) {
   const objectFromFormData = Object.fromEntries(formData.entries());
   const parsed = schema.safeParse(objectFromFormData);
   if (!parsed.success) {
@@ -31,7 +24,7 @@ export default async function editCertificationAction(formData: FormData) {
   }
 
   return API.auth.profile.certification
-    .updateById(parsed.data.id, parsed.data)
+    .updateById(id, parsed.data)
     .then(() => ({ success: true }))
     .catch(() => {
       return { error: 'Something went wrong' };

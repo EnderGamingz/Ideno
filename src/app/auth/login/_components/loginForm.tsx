@@ -16,19 +16,21 @@ export function CredentialForm({
   formSubmitHandler,
   state,
   children,
+  inDialog,
 }: {
   title: string;
   formSubmitHandler: (payload: FormData) => void;
   state: { errors?: ZodIssue[]; error?: string; success?: boolean };
   children: ReactNode | ReactNode[];
+  inDialog?: boolean;
 }) {
   return (
     <styled.form
       css={{
         mt: 10,
         p: 4,
-        bg: 'surface',
-        shadow: 'md',
+        bg: !inDialog ? 'surface' : undefined,
+        shadow: !inDialog ? 'md' : undefined,
         maxW: 'lg',
         w: 'full',
         rounded: 'md',
@@ -79,7 +81,7 @@ export function CredentialForm({
   );
 }
 
-export function LoginForm() {
+export function LoginForm({ inDialog }: { inDialog?: boolean }) {
   const router = useRouter();
   const [state, formAction] = useFormState(loginSubmit, {
     errors: undefined,
@@ -110,13 +112,10 @@ export function LoginForm() {
   };
 
   return (
-    <Box
-      css={{
-        display: 'grid',
-        placeItems: 'center',
-      }}>
-      <BackgroundBlobs />
+    <Box display={'grid'} placeItems={'center'}>
+      {!inDialog && <BackgroundBlobs />}
       <CredentialForm
+        inDialog={inDialog}
         title={'Login to your account'}
         formSubmitHandler={formAction}
         state={state}>

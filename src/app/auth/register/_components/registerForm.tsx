@@ -1,9 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 import registerSubmit from '@/app/auth/register/_components/registerAction';
-import Button from '@/recipes/button';
-import Icon from '@/app/_components/icon';
 import { Box } from '@/styling/jsx';
 import { BackgroundBlobs } from '@/app/_components/backgroundBlobs';
 import React from 'react';
@@ -12,7 +10,7 @@ import {
   CredentialInput,
 } from '@/app/auth/login/_components/loginForm';
 
-export function RegisterForm() {
+export function RegisterForm({ inDialog }: { inDialog?: boolean }) {
   const [state, formAction] = useFormState(registerSubmit, {
     errors: undefined,
     success: undefined,
@@ -35,8 +33,9 @@ export function RegisterForm() {
         display: 'grid',
         placeItems: 'center',
       }}>
-      <BackgroundBlobs />
+      {!inDialog && <BackgroundBlobs />}
       <CredentialForm
+        inDialog={inDialog}
         title={'Register'}
         formSubmitHandler={formAction}
         state={state}>

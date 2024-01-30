@@ -10,7 +10,7 @@ import LogoutAction from '@/app/_components/header/logoutAction';
 
 export default function LogoutButton() {
   return (
-    <Popover className={css({ pos: 'relative' })}>
+    <Popover className={css({ pos: 'relative', zIndex: 100 })}>
       <Popover.Button
         className={button({ variant: 'outline', contentType: 'icon' })}>
         <Icon.Logout />
