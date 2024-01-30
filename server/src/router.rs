@@ -113,8 +113,11 @@ fn create_auth_admin_routes() -> Router<AppState> {
 
 fn create_public_profile_routes() -> Router<AppState> {
     let get_public_profile = profile::index::get_public_profile;
+    let get_public_certifications = profile::certification::get_public_certifications;
 
-    return Router::new().route("/:id", get(get_public_profile));
+    return Router::new()
+        .route("/:id", get(get_public_profile))
+        .route("/:id/certifications", get(get_public_certifications));
 }
 
 pub fn router(

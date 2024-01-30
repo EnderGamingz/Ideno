@@ -19,6 +19,10 @@ export interface PublicCertificationModel {
   credential_url?: string;
 }
 
+export interface AuthCertificationModel extends PublicCertificationModel {
+  id?: number;
+}
+
 export interface AddCertificationPayload {
   name: string;
   organization: string;

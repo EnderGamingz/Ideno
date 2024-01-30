@@ -33,7 +33,8 @@ export function ProfileCard({
       {profile.headline && <styled.p>{profile.headline}</styled.p>}
       {(profile.country || profile.city) && (
         <styled.p mt={1} fontSize={'sm'} ct={'black/50'}>
-          {profile.city && `${profile.city} • `}
+          {profile.city}
+          {profile.city && profile.country && ' • '}
           {profile.country}
         </styled.p>
       )}

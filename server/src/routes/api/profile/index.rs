@@ -1,7 +1,6 @@
 use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
-
 use crate::models::certification::PublicCertificationModel;
 use crate::models::contact_information::PublicContactInformationModel;
 use crate::models::education::PublicEducationModel;
@@ -9,23 +8,13 @@ use crate::models::experience::PublicExperienceModel;
 use crate::models::profile::{PublicProfileModel, PublicProfileResponse};
 use crate::response::error_handling::AppError;
 use crate::AppState;
+use crate::auth::check_user;
 
 pub async fn get_public_profile(
     State(state): State<AppState>,
     Path(identifier): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
-    let user_id = sqlx::query_as::<_, (i64,)>("SELECT id FROM users where username = ?")
-        .bind(identifier)
-        .fetch_optional(&*state.db)
-        .await
-        .map_err(|_| AppError::InternalError)?
-        .map(|row| row.0);
-
-    if user_id.is_none() {
-        return Err(AppError::NotFound {
-            error: "Profile not Found".to_string(),
-        });
-    }
+    let user = check_user::check_user_by_username(identifier, &state.db).await?;
 
     let found_profile = sqlx::query_as::<_, PublicProfileModel>(
         "SELECT
@@ -38,7 +27,7 @@ pub async fn get_public_profile(
                 bio
             FROM profiles where user_id = ?",
     )
-    .bind(user_id.unwrap())
+    .bind(user.id)
     .fetch_one(&*state.db)
     .await
     .map_err(|_| AppError::InternalError)?;
@@ -55,7 +44,7 @@ pub async fn get_public_profile(
               WHERE user_id = ?
               LIMIT 3",
     )
-    .bind(user_id.unwrap())
+    .bind(user.id)
     .fetch_all(&*state.db)
     .await
     .map_err(|_| AppError::InternalError)?;

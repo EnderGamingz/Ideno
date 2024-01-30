@@ -1,12 +1,12 @@
 'use client';
 
 import Icon from '@/app/_components/icon';
-import { Stack } from '@/styling/jsx';
 import { PublicProfileModel } from '@/types/profile';
 import profileUpdateAction from '@/app/profile/_components/profile/profileUpdateAction';
 import { EditField } from '@/app/profile/_components/editField';
 import { SelectPronouns } from '@/app/profile/_components/profile/selectPronouns';
 import EditDataDialog from '@/app/_components/editDataDialog';
+import { Grid } from '@/styling/jsx';
 
 export default function EditProfileDialog({
   profile,
@@ -34,14 +34,14 @@ export default function EditProfileDialog({
         fieldId={'headline'}
         value={profile.headline}
       />
-      <Stack flexDirection={{ base: 'column', sm: 'row' }}>
+      <Grid columns={{ base: 1, md: 2 }}>
         <EditField label={'City'} fieldId={'city'} value={profile.city} />
         <EditField
           label={'Country'}
           fieldId={'country'}
           value={profile.country}
         />
-      </Stack>
+      </Grid>
       <SelectPronouns initial={profile.pronouns} />
       <EditField
         type={'textarea'}

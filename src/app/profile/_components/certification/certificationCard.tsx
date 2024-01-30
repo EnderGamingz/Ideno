@@ -15,10 +15,10 @@ export function CertificationCard({
   data,
 }: {
   username: string;
-  user: PublicAuthUserModel;
+  user?: PublicAuthUserModel;
   data: PublicCertificationModel[];
 }) {
-  const isCurrentUser = username === user.username;
+  const isCurrentUser = username === user?.username;
   if (!isCurrentUser && data.length === 0) return null;
   return (
     <Card>
@@ -28,7 +28,7 @@ export function CertificationCard({
       </HStack>
       <Box mb={2}>
         {data.map((item, i) => (
-          <Certification
+          <CertificationItem
             data={item}
             key={`${item.name + item.organization}${i}`}
             last={data.length - 1 === i}
@@ -46,7 +46,7 @@ export function CertificationCard({
   );
 }
 
-function Certification({
+export function CertificationItem({
   data,
   last,
 }: {

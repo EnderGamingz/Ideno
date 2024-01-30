@@ -23,3 +23,14 @@ pub struct PublicCertificationModel {
     pub credential_id: Option<String>,
     pub credential_url: Option<String>,
 }
+
+#[derive(Clone, FromRow, Debug, Serialize)]
+pub struct AuthCertificationModel {
+    pub id: i32,
+    pub name: String,
+    pub organization: String,
+    pub issue_date: Option<String>,
+    pub expiration_date: Option<String>,
+    pub credential_id: Option<String>,
+    pub credential_url: Option<String>,
+}

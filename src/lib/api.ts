@@ -9,7 +9,6 @@ import {
 import {
   ProfileModel,
   ProfileUpdatePayload,
-  PublicProfileModel,
   PublicProfileResponse,
 } from '@/types/profile';
 import { AccountUpdatePayload, PasswordUpdatePayload } from '@/types/account';
@@ -18,7 +17,10 @@ import {
   AddContactInformationPayload,
   ContactInformationModel,
 } from '@/types/contactInformation';
-import { AddCertificationPayload } from '@/types/certification';
+import {
+  AddCertificationPayload,
+  AuthCertificationModel,
+} from '@/types/certification';
 import { AddEducationPayload } from '@/types/education';
 import { AddExperiencePayload } from '@/types/experience';
 
@@ -232,9 +234,16 @@ const user_api = {
 
 const profile_public_api = {
   async getByUsername(name: string) {
-    return await API.get(`profile/${name}`).then(
-      async res => (await res.json()) as PublicProfileResponse,
-    );
+    return await API.get(`profile/${name}`).then(async res => {
+      if (!res.ok) return undefined;
+      return (await res.json()) as PublicProfileResponse;
+    });
+  },
+  async getCertificationsByUsername(name: string) {
+    return await API.get(`profile/${name}/certifications`).then(async res => {
+      if (!res.ok) return undefined;
+      return (await res.json()) as AuthCertificationModel[];
+    });
   },
 };
 
@@ -248,6 +257,7 @@ export default class API {
       next: options,
     });
   }
+
   static async post(endpoint: string, data: any) {
     return await fetch(api_url + endpoint, {
       method: 'POST',
@@ -258,6 +268,7 @@ export default class API {
       body: JSON.stringify(data),
     });
   }
+
   static async patch(endpoint: string, data: any) {
     return await fetch(api_url + endpoint, {
       method: 'PATCH',
@@ -268,6 +279,7 @@ export default class API {
       body: JSON.stringify(data),
     });
   }
+
   static async delete(endpoint: string) {
     return await fetch(api_url + endpoint, {
       method: 'DELETE',

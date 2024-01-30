@@ -14,6 +14,7 @@ const customDate = z.string().refine(
 );
 
 const schema = z.object({
+  id: z.number(),
   name: z.string().min(1),
   organization: z.string().min(1),
   issue_date: customDate.optional(),
@@ -22,7 +23,7 @@ const schema = z.object({
   credential_url: z.string().optional(),
 });
 
-export default async function addCertificationAction(formData: FormData) {
+export default async function editCertificationAction(formData: FormData) {
   const objectFromFormData = Object.fromEntries(formData.entries());
   const parsed = schema.safeParse(objectFromFormData);
   if (!parsed.success) {
@@ -30,7 +31,7 @@ export default async function addCertificationAction(formData: FormData) {
   }
 
   return API.auth.profile.certification
-    .create(parsed.data)
+    .updateById(parsed.data.id, parsed.data)
     .then(() => ({ success: true }))
     .catch(() => {
       return { error: 'Something went wrong' };
