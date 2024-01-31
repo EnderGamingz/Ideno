@@ -66,12 +66,12 @@ export function EducationItem({
         condition={!!data?.id}
         wrapper={c => (
           <HStack justify={'space-between'}>
-            <Box>{c}</Box>
+            <div>{c}</div>
             <HStack>
               <EditEducationDialog data={data} />
               <ConfirmPopover
                 label={'Are you sure?'}
-                buttonEl={<Icon.Delete size={18} />}
+                buttonEl={<Icon.Delete />}
                 confirm={{
                   action: deleteEducationAction,
                   actionPayload: data.id!,
@@ -94,27 +94,25 @@ export function EducationItem({
           {data.degree && data.field && ', '} {data.field}
         </styled.p>
         <Box ct={'black/50'} fontSize={'0.8rem'}>
-          <HStack>
+          <div>
             {data.start_date && (
               <styled.span>
-                From{' '}
                 {new Date(data.start_date).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'short',
                 })}
               </styled.span>
             )}
-            {data.start_date && data.end_date && '-'}
+            {data.start_date && data.end_date && ' - '}
             {data.end_date && (
               <styled.span>
-                To{' '}
                 {new Date(data.end_date).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'short',
                 })}
               </styled.span>
             )}
-          </HStack>
+          </div>
         </Box>
       </ConditionalWrapper>
     </Box>

@@ -1,14 +1,20 @@
 import { ReactNode } from 'react';
 import { Box } from '@/styling/jsx';
 
-export function Card({ children }: { children: ReactNode }) {
+export function Card({
+  children,
+  sticky,
+}: {
+  children: ReactNode;
+  sticky?: boolean;
+}) {
   return (
     <Box
       bg={'white'}
       p={2}
       shadow={'md'}
       rounded={'lg'}
-      pos={{ base: 'static', md: 'sticky' }}
+      pos={sticky ? { base: 'static', md: 'sticky' } : undefined}
       top={3}
       css={{
         '& > * > h2': {

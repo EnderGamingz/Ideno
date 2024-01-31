@@ -28,7 +28,7 @@ export function ConfirmPopover({
       <Popover.Button
         className={button({
           variant: 'outline',
-          contentType: 'icon',
+          contentType: 'iconRound',
         })}>
         {buttonEl}
       </Popover.Button>

@@ -110,7 +110,7 @@ export function CertificationItem({
         </ConditionalWrapper>
         <styled.p>{data.organization}</styled.p>
         <Box ct={'black/50'} fontSize={'0.8rem'}>
-          <HStack>
+          <div>
             {data.issue_date && (
               <styled.span>
                 Issued{' '}
@@ -120,7 +120,7 @@ export function CertificationItem({
                 })}
               </styled.span>
             )}
-            {data.issue_date && data.expiration_date && '•'}
+            {data.issue_date && data.expiration_date && ' • '}
             {data.expiration_date && (
               <styled.span>
                 Expires{' '}
@@ -130,7 +130,7 @@ export function CertificationItem({
                 })}
               </styled.span>
             )}
-          </HStack>
+          </div>
           {data.credential_id && <span>ID: {data.credential_id}</span>}
         </Box>
       </ConditionalWrapper>

@@ -8,8 +8,8 @@ const schema = z.object({
   school: z.string().min(1),
   degree: z.string().optional(),
   field: z.string().optional(),
-  startDate: customDate.optional(),
-  endDate: customDate.optional(),
+  start_date: customDate.optional(),
+  end_date: customDate.optional(),
 });
 
 export default async function addEducationAction(formData: FormData) {

@@ -14,7 +14,7 @@ export function ProfileCard({
 }) {
   const profile = data.profile;
   return (
-    <Card>
+    <Card sticky>
       <HStack justify={'space-between'}>
         <HStack gap={'0.3rem'}>
           <styled.h1 fontSize={'3xl'} fontWeight={'semibold'}>
@@ -54,7 +54,6 @@ export function ProfileCard({
           <styled.p whiteSpace={'pre-wrap'}>{profile.bio}</styled.p>
         </Box>
       )}
-      <pre>{JSON.stringify(data, null, 2)}</pre>
     </Card>
   );
 }
