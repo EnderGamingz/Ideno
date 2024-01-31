@@ -24,3 +24,13 @@ pub struct PublicExperienceModel {
     pub description: Option<String>,
 }
 
+#[derive(Clone, FromRow, Debug, Serialize)]
+pub struct AuthExperienceModel {
+    pub id: i32,
+    pub company: String,
+    pub title: String,
+    pub start_date: Option<String>,
+    pub end_date: Option<String>,
+    pub exp_type: Option<String>,
+    pub description: Option<String>,
+}

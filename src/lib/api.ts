@@ -22,7 +22,7 @@ import {
   AuthCertificationModel,
 } from '@/types/certification';
 import { AddEducationPayload, AuthEducationModel } from '@/types/education';
-import { AddExperiencePayload } from '@/types/experience';
+import { AddExperiencePayload, AuthExperienceModel } from '@/types/experience';
 
 const api_url = `${process.env.API_URL}/api/${process.env.API_VERSION}/`;
 
@@ -249,6 +249,12 @@ const profile_public_api = {
     return await API.get(`profile/${name}/educations`).then(async res => {
       if (!res.ok) return undefined;
       return (await res.json()) as AuthEducationModel[];
+    });
+  },
+  async getExperienceByUsername(name: string) {
+    return await API.get(`profile/${name}/experiences`).then(async res => {
+      if (!res.ok) return undefined;
+      return (await res.json()) as AuthExperienceModel[];
     });
   },
 };

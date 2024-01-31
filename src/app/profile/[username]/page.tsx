@@ -5,6 +5,7 @@ import { ProfileCard } from '@/app/profile/_components/profile/profileCard';
 import { CertificationCard } from '@/app/profile/_components/certification/certificationCard';
 import { notFound } from 'next/navigation';
 import { EducationCard } from '@/app/profile/_components/education/educationCard';
+import { ExperienceCard } from '@/app/profile/_components/experience/experienceCard';
 
 export default async function Page({
   params: { username },
@@ -28,6 +29,11 @@ export default async function Page({
           username={username}
           user={user}
           data={userProfile.education}
+        />
+        <ExperienceCard
+          username={username}
+          user={user}
+          data={userProfile.experience}
         />
       </Stack>
     </Grid>

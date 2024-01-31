@@ -19,6 +19,10 @@ export interface PublicExperienceModel {
   description?: string;
 }
 
+export interface AuthExperienceModel extends PublicExperienceModel {
+  id?: number;
+}
+
 export interface AddExperiencePayload {
   company: string;
   title: string;

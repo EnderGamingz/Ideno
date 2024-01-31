@@ -115,11 +115,13 @@ fn create_public_profile_routes() -> Router<AppState> {
     let get_public_profile = profile::index::get_public_profile;
     let get_public_certifications = profile::certification::get_public_certifications;
     let get_public_educations = profile::educations::get_public_educations;
+    let get_public_experiences = profile::experience::get_public_experiences;
 
     return Router::new()
         .route("/:id", get(get_public_profile))
         .route("/:id/certifications", get(get_public_certifications))
-        .route("/:id/educations", get(get_public_educations));
+        .route("/:id/educations", get(get_public_educations))
+        .route("/:id/experiences", get(get_public_experiences));
 }
 
 pub fn router(

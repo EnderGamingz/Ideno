@@ -71,12 +71,12 @@ export function CredentialForm({
         {title}
       </styled.h1>
       <Alert
-        status={state.error ? 'error' : state.success ? 'success' : 'hidden'}>
-        {state.success ? <Icon.Check size={20} /> : <Icon.Error size={20} />}
-        {state.error ? state.error : state.success ? 'Success' : ''}
+        status={state?.error ? 'error' : state?.success ? 'success' : 'hidden'}>
+        {state?.success ? <Icon.Check size={20} /> : <Icon.Error size={20} />}
+        {state?.error ? state?.error : state?.success ? 'Success' : ''}
       </Alert>
       {children}
-      <SubmitButton disabled={!!state.success} />
+      <SubmitButton disabled={!!state?.success} />
     </styled.form>
   );
 }
