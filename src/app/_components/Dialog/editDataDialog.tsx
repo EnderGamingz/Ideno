@@ -1,5 +1,5 @@
 'use client';
-import { Fragment, ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/recipes/button';
 import { DialogDescription, DialogTitle } from '@/app/_components/Dialog/index';
@@ -27,7 +27,7 @@ export default function EditDataDialog({
   return (
     <>
       <Button
-        contentType={'icon'}
+        contentType={'iconRound'}
         variant={'outline'}
         onClick={() => setIsOpen(true)}>
         {button}

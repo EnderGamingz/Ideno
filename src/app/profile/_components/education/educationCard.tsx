@@ -97,17 +97,17 @@ export function EducationItem({
           <HStack>
             {data.start_date && (
               <styled.span>
-                Issued{' '}
+                From{' '}
                 {new Date(data.start_date).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'short',
                 })}
               </styled.span>
             )}
-            {data.start_date && data.end_date && '•'}
+            {data.start_date && data.end_date && '-'}
             {data.end_date && (
               <styled.span>
-                Expires{' '}
+                To{' '}
                 {new Date(data.end_date).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'short',
