@@ -2,7 +2,7 @@
 
 import Icon from '@/app/_components/icon';
 import { EditField } from '@/app/profile/_components/editField';
-import EditDataDialog from '@/app/_components/editDataDialog';
+import EditDataDialog from '@/app/_components/Dialog/editDataDialog';
 import addCertificationAction from '@/app/profile/_components/certification/addCertificationAction';
 
 export default function AddCertificationDialog() {

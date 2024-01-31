@@ -5,7 +5,7 @@ import { PublicProfileModel } from '@/types/profile';
 import profileUpdateAction from '@/app/profile/_components/profile/profileUpdateAction';
 import { EditField } from '@/app/profile/_components/editField';
 import { SelectPronouns } from '@/app/profile/_components/profile/selectPronouns';
-import EditDataDialog from '@/app/_components/editDataDialog';
+import EditDataDialog from '@/app/_components/Dialog/editDataDialog';
 import { Grid } from '@/styling/jsx';
 
 export default function EditProfileDialog({

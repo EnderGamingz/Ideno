@@ -25,8 +25,6 @@ export function RegisterForm({ inDialog }: { inDialog?: boolean }) {
     }
   };
 
-  console.log(state.error);
-
   return (
     <Box
       css={{

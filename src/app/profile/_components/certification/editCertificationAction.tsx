@@ -14,8 +14,8 @@ const schema = z.object({
 });
 
 export default async function editCertificationAction(
-  formData: FormData,
   id: number,
+  formData: FormData,
 ) {
   const objectFromFormData = Object.fromEntries(formData.entries());
   const parsed = schema.safeParse(objectFromFormData);

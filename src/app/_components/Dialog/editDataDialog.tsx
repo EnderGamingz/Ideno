@@ -2,11 +2,11 @@
 import { Fragment, ReactNode, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/recipes/button';
-import { DialogDescription, DialogTitle } from '@/app/_components/Dialog';
+import { DialogDescription, DialogTitle } from '@/app/_components/Dialog/index';
 import { HStack, Stack } from '@/styling/jsx';
 import Icon from '@/app/_components/icon';
 import Alert from '@/recipes/alert';
-import { FixedDialog } from '@/app/_components/fixedDialog';
+import { FixedDialog } from '@/app/_components/Dialog/fixedDialog';
 
 export default function EditDataDialog({
   button,

@@ -18,7 +18,8 @@ export default async function Header() {
         gap: '1rem',
         borderBottom: '1px solid',
         bct: 'black/85',
-        zIndex: 10,
+        zIndex: 1000,
+        pos: 'relative',
         bg: 'background',
       }}>
       <styled.nav
