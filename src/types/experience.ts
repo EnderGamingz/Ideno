@@ -1,21 +1,21 @@
 export interface ExperienceModel {
   id: number;
-  userId: number;
+  user_id: number;
   company: string;
   title: string;
-  startDate?: string;
-  endDate?: string;
-  expType?: string;
+  start_date?: string;
+  end_date?: string;
+  exp_type?: string;
   description?: string;
-  createdAt: string;
+  created_at: string;
 }
 
 export interface PublicExperienceModel {
   company: string;
   title: string;
-  startDate?: string;
-  endDate?: string;
-  expType?: string;
+  start_date?: string;
+  end_date?: string;
+  exp_type?: string;
   description?: string;
 }
 

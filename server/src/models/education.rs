@@ -21,3 +21,13 @@ pub struct PublicEducationModel {
     pub start_date: Option<String>,
     pub end_date: Option<String>,
 }
+
+#[derive(Clone, FromRow, Debug, Serialize)]
+pub struct AuthEducationModel {
+    pub id: i32,
+    pub school: String,
+    pub degree: Option<String>,
+    pub field: Option<String>,
+    pub start_date: Option<String>,
+    pub end_date: Option<String>,
+}

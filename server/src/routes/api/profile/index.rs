@@ -60,6 +60,7 @@ pub async fn get_public_profile(
             WHERE user_id = ?
             LIMIT 3",
     )
+    .bind(user.id)
     .fetch_all(&*state.db)
     .await
     .map_err(|_| AppError::InternalError)?;
@@ -76,6 +77,7 @@ pub async fn get_public_profile(
             WHERE user_id = ?
             LIMIT 3",
     )
+    .bind(user.id)
     .fetch_all(&*state.db)
     .await
     .map_err(|_| AppError::InternalError)?;
@@ -87,6 +89,7 @@ pub async fn get_public_profile(
             FROM contact_information
             WHERE user_id = ?",
     )
+    .bind(user.id)
     .fetch_all(&*state.db)
     .await
     .map_err(|_| AppError::InternalError)?;

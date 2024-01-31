@@ -114,10 +114,12 @@ fn create_auth_admin_routes() -> Router<AppState> {
 fn create_public_profile_routes() -> Router<AppState> {
     let get_public_profile = profile::index::get_public_profile;
     let get_public_certifications = profile::certification::get_public_certifications;
+    let get_public_educations = profile::educations::get_public_educations;
 
     return Router::new()
         .route("/:id", get(get_public_profile))
-        .route("/:id/certifications", get(get_public_certifications));
+        .route("/:id/certifications", get(get_public_certifications))
+        .route("/:id/educations", get(get_public_educations));
 }
 
 pub fn router(

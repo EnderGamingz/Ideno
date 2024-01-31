@@ -4,6 +4,7 @@ import auth from 'auth';
 import { ProfileCard } from '@/app/profile/_components/profile/profileCard';
 import { CertificationCard } from '@/app/profile/_components/certification/certificationCard';
 import { notFound } from 'next/navigation';
+import { EducationCard } from '@/app/profile/_components/education/educationCard';
 
 export default async function Page({
   params: { username },
@@ -14,8 +15,6 @@ export default async function Page({
   const userProfile = await API.profile.getByUsername(username);
   if (!userProfile) notFound();
 
-  console.log(userProfile);
-
   return (
     <Grid columns={{ base: 1, md: 2 }} p={5} gap={5} alignItems={'flex-start'}>
       <ProfileCard data={userProfile} username={username} user={user} />
@@ -24,6 +23,11 @@ export default async function Page({
           username={username}
           user={user}
           data={userProfile.certification}
+        />
+        <EducationCard
+          username={username}
+          user={user}
+          data={userProfile.education}
         />
       </Stack>
     </Grid>

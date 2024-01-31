@@ -4,23 +4,27 @@ export interface EducationModel {
   school: string;
   degree?: string;
   field?: string;
-  startDate?: string;
-  endDate?: string;
-  createdAt: string;
+  start_date?: string;
+  end_date?: string;
+  created_at: string;
 }
 
 export interface PublicEducationModel {
   school: string;
   degree?: string;
   field?: string;
-  startDate?: string;
-  endDate?: string;
+  start_date?: string;
+  end_date?: string;
+}
+
+export interface AuthEducationModel extends PublicEducationModel {
+  id?: number;
 }
 
 export interface AddEducationPayload {
   school: string;
   degree?: string;
   field?: string;
-  startDate?: string;
-  endDate?: string;
+  start_date?: string;
+  end_date?: string;
 }

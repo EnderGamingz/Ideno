@@ -1,13 +1,13 @@
 export interface ContactInformationModel {
   id: number;
-  userId: number;
-  typeField: string;
+  user_id: number;
+  type_field: string;
   value: string;
-  createdAt: string;
+  created_at: string;
 }
 
 export interface PublicContactInformationModel {
-  typeField: string;
+  type_field: string;
   value: string;
 }
 
