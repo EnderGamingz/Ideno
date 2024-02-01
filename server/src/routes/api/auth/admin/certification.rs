@@ -1,8 +1,6 @@
 use axum::extract::{Path, State};
-use axum::response::IntoResponse;
 use tower_sessions::Session;
 
-use crate::auth::check_admin::check_admin;
 use crate::response::error_handling::AppError;
 use crate::response::success_handling::AppSuccess;
 use crate::AppState;
@@ -11,32 +9,14 @@ pub async fn admin_delete_certification(
     State(state): State<AppState>,
     session: Session,
     Path(id): Path<i32>,
-) -> Result<impl IntoResponse, AppError> {
-    check_admin(&session, &state.db).await?;
-    certification_exists(&state, id).await?;
+) -> Result<AppSuccess, AppError> {
+    state.user_service.check_admin(&session).await?;
+    state.certification_service.certification_exists(id).await?;
 
-    sqlx::query("DELETE FROM certification WHERE id = $1")
-        .bind(id)
-        .execute(&*state.db)
-        .await
-        .map_err(|_| AppError::InternalError)?;
+    state
+        .certification_service
+        .admin_delete_certification(id)
+        .await?;
 
     Ok(AppSuccess::DELETED)
-}
-
-async fn certification_exists(state: &AppState, payload: i32) -> Result<Option<bool>, AppError> {
-    let flag = sqlx::query_as::<_, (i64,)>("SELECT COUNT(*) FROM certification WHERE id = $1")
-        .bind(payload)
-        .fetch_one(&*state.db)
-        .await
-        .map_err(|_| AppError::InternalError)
-        .map_or_else(|_| None, |count| Some(count.0 > 0));
-
-    if !flag.unwrap() {
-        return Err(AppError::NotFound {
-            error: "Certification not found".to_string(),
-        });
-    }
-
-    Ok(flag)
 }

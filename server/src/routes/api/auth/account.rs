@@ -3,23 +3,18 @@ use axum::response::IntoResponse;
 use axum::Json;
 use tower_sessions::Session;
 
-use crate::auth::check_user::check_user;
 use crate::response::error_handling::AppError;
 use crate::response::success_handling::AppSuccess;
+use crate::services::account_service::{AccountUpdatePayload, PasswordUpdatePayload};
+use crate::services::session_service::SessionService;
 use crate::AppState;
-
-#[derive(serde::Deserialize)]
-pub struct AccountUpdatePayload {
-    username: Option<String>,
-    email: Option<String>,
-}
 
 pub async fn update_account(
     State(state): State<AppState>,
     session: Session,
     Json(payload): Json<AccountUpdatePayload>,
-) -> Result<impl IntoResponse, AppError> {
-    let user = check_user(&session, &*state.db).await?;
+) -> Result<AppSuccess, AppError> {
+    let user = state.user_service.check_user(&session).await?;
 
     if payload.username.is_some() && payload.email.is_some() {
         return Err(AppError::BadRequest {
@@ -33,27 +28,15 @@ pub async fn update_account(
         })?;
     }
 
-    let new_username_exists = if let Some(ref username) = payload.username {
-        sqlx::query("SELECT id FROM users WHERE username = $1")
-            .bind(username)
-            .fetch_optional(&*state.db)
-            .await
-            .map_err(|_| return AppError::InternalError)?
-            .is_some()
-    } else {
-        false
-    };
+    let new_username_exists = state
+        .account_service
+        .username_exists(payload.username.clone().unwrap())
+        .await;
 
-    let new_email_exists = if let Some(ref email) = payload.email {
-        sqlx::query("SELECT id FROM users WHERE email = $1")
-            .bind(email)
-            .fetch_optional(&*state.db)
-            .await
-            .map_err(|_| return AppError::InternalError)?
-            .is_some()
-    } else {
-        false
-    };
+    let new_email_exists = state
+        .account_service
+        .email_exists(payload.email.clone().unwrap())
+        .await;
 
     let new_value_type = if payload.username.is_some() {
         "username"
@@ -67,26 +50,23 @@ pub async fn update_account(
         })?;
     }
 
-    let new_value = match new_value_type {
-        "username" => payload.username.unwrap(),
-        "email" => payload.email.unwrap(),
+    match new_value_type {
+        "username" => {
+            state
+                .account_service
+                .update_username(user.id, payload.username.unwrap())
+                .await?
+        }
+        "email" => {
+            state
+                .account_service
+                .update_email(user.id, payload.email.unwrap())
+                .await?
+        }
         _ => return Err(AppError::InternalError)?,
     };
 
-    sqlx::query(format!("UPDATE users SET {} = $1 WHERE id = $2", new_value_type).as_str())
-        .bind(new_value)
-        .bind(user.id)
-        .execute(&*state.db)
-        .await
-        .map_err(|_| return AppError::InternalError)?;
-
     Ok(AppSuccess::UPDATED)
-}
-
-#[derive(serde::Deserialize)]
-pub struct PasswordUpdatePayload {
-    old_password: String,
-    new_password: String,
 }
 
 pub async fn update_password(
@@ -94,7 +74,7 @@ pub async fn update_password(
     session: Session,
     Json(payload): Json<PasswordUpdatePayload>,
 ) -> Result<impl IntoResponse, AppError> {
-    let user = check_user(&session, &*state.db).await?;
+    let user = state.user_service.check_user(&session).await?;
 
     let password_match = bcrypt::verify(&payload.old_password, &user.password)
         .map_err(|_| return AppError::InternalError)?;
@@ -117,12 +97,7 @@ pub async fn update_password(
     let hash = bcrypt::hash(&payload.new_password, bcrypt::DEFAULT_COST)
         .map_err(|_| return AppError::InternalError)?;
 
-    sqlx::query("UPDATE users SET password = $1 WHERE id = $2")
-        .bind(hash)
-        .bind(user.id)
-        .execute(&*state.db)
-        .await
-        .map_err(|_| return AppError::InternalError)?;
+    state.account_service.update_password(user.id, hash).await?;
 
     Ok(AppSuccess::UPDATED)
 }
@@ -130,16 +105,12 @@ pub async fn update_password(
 pub async fn delete_account(
     State(state): State<AppState>,
     session: Session,
-) -> Result<impl IntoResponse, AppError> {
-    let user = check_user(&session, &*state.db).await?;
+) -> Result<AppSuccess, AppError> {
+    let user = state.user_service.check_user(&session).await?;
 
-    sqlx::query("DELETE FROM users WHERE id = $1")
-        .bind(user.id)
-        .execute(&*state.db)
-        .await
-        .map_err(|_| return AppError::InternalError)?;
+    state.user_service.delete_user(user.id).await?;
 
-    session.flush().await.unwrap();
+    SessionService::flush_session(&session).await;
 
     Ok(AppSuccess::DELETED)
 }

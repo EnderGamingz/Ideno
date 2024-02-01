@@ -2,7 +2,7 @@ use crate::models::certification::PublicCertificationModel;
 use crate::models::contact_information::PublicContactInformationModel;
 use crate::models::education::PublicEducationModel;
 use crate::models::experience::PublicExperienceModel;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
 #[derive(Clone, FromRow, Debug, Serialize)]
@@ -18,7 +18,7 @@ pub struct ProfileModel {
     pub created_at: String,
 }
 
-#[derive(Clone, FromRow, Debug, Serialize)]
+#[derive(Clone, FromRow, Debug, Serialize, Deserialize)]
 pub struct PublicProfileModel {
     pub first_name: Option<String>,
     pub last_name: Option<String>,

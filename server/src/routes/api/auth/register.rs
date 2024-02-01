@@ -1,35 +1,20 @@
 use axum::extract::State;
 use axum::response::IntoResponse;
 use axum::Json;
-use serde::{Deserialize, Serialize};
 
-use crate::models::user::UserModel;
 use crate::response::error_handling::AppError;
 use crate::response::success_handling::AppSuccess;
+use crate::services::account_service::RegisterCredentials;
 use crate::AppState;
-
-#[derive(Serialize, Deserialize)]
-pub struct RegisterCredentials {
-    pub(crate) email: String,
-    pub(crate) username: String,
-    pub(crate) password: String,
-}
 
 pub async fn register(
     State(state): State<AppState>,
     Json(payload): Json<RegisterCredentials>,
 ) -> Result<impl IntoResponse, AppError> {
-    let user_results = sqlx::query_as::<_, UserModel>(
-        "SELECT * FROM users WHERE username = ? OR email = ? LIMIT 1",
-    )
-    .bind(&payload.username)
-    .bind(&payload.email)
-    .fetch_optional(&*state.db)
-    .await
-    .map_err(|err| {
-        tracing::error!("Error fetching User: {}", err);
-        AppError::InternalError
-    })?;
+    let user_results = state
+        .user_service
+        .get_user_by_email_or_username(&payload.email, &payload.username)
+        .await?;
 
     if user_results.is_some() {
         return Err(AppError::BadRequest {
@@ -37,25 +22,12 @@ pub async fn register(
         })?;
     }
 
-    let password_hash = bcrypt::hash(payload.password, 12);
+    let password_hash = bcrypt::hash(&payload.password, 12);
 
     match password_hash {
         Ok(hash) => {
-            let user = sqlx::query_as::<_, UserModel>(
-                "INSERT INTO users (email, username, password) VALUES (?, ?, ?) RETURNING *",
-            )
-            .bind(payload.email)
-            .bind(payload.username)
-            .bind(hash)
-            .fetch_one(&*state.db)
-            .await
-            .unwrap();
-
-            sqlx::query("INSERT INTO profiles (user_id) VALUES (?)")
-                .bind(user.id)
-                .execute(&*state.db)
-                .await
-                .unwrap();
+            let user = state.account_service.create_account(payload, hash).await?;
+            state.profile_service.create_profile(user.id).await?;
         }
         Err(_) => Err(AppError::InternalError)?,
     };

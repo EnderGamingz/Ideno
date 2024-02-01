@@ -1,31 +1,19 @@
-use axum::body::Body;
 use axum::extract::State;
-use axum::http::StatusCode;
-use axum::response::{IntoResponse, Response};
+use axum::Json;
 use tower_sessions::Session;
 
-use crate::models::user::PublicAuthUserModel;
 use crate::response::error_handling::AppError;
+use crate::services::session_service::SessionService;
 use crate::AppState;
 
 pub async fn auth(
     State(state): State<AppState>,
     session: Session,
-) -> Result<impl IntoResponse, AppError> {
-    if let Some(user_id) = session.get::<String>("user_id").await.unwrap() {
-        let result = sqlx::query_as::<_, PublicAuthUserModel>(
-            "SELECT id, username, email, created_at FROM users WHERE id = ?",
-        )
-        .bind(user_id)
-        .fetch_one(&*state.db)
-        .await
-        .map_err(|_| AppError::UserNotFound)?;
+) -> Result<Json<serde_json::Value>, AppError> {
+    if let Some(user_id) = SessionService::get_session_id(&session).await {
+        let result = state.user_service.get_public_auth_user(user_id).await?;
 
-        return Ok(Response::builder()
-            .status(StatusCode::OK)
-            .body(Body::from(serde_json::to_string(&result).unwrap()))
-            .unwrap()
-            .into_response());
+        return Ok(Json(serde_json::to_value(result).unwrap()));
     };
     Err(AppError::NotLoggedIn)
 }

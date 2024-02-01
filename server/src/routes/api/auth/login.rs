@@ -1,13 +1,11 @@
 use axum::extract::State;
-use axum::http::StatusCode;
-use axum::response::IntoResponse;
 use axum::Json;
 use serde::{Deserialize, Serialize};
 use tower_sessions::Session;
 
-use crate::models::user::UserModel;
 use crate::response::error_handling::AppError;
 use crate::response::success_handling::AppSuccess;
+use crate::services::session_service::SessionService;
 use crate::AppState;
 
 #[derive(Serialize, Deserialize)]
@@ -20,17 +18,16 @@ pub async fn login(
     State(state): State<AppState>,
     session: Session,
     Json(payload): Json<LoginCredentials>,
-) -> Result<impl IntoResponse, AppError> {
-    if let Some(_user) = session.get::<String>("user_id").await.unwrap() {
-        return Ok(StatusCode::OK.into_response());
+) -> Result<AppSuccess, AppError> {
+    let user_id = SessionService::get_session_id(&session).await;
+    if user_id.is_some() {
+        return Ok(AppSuccess::OK { data: None });
     }
 
-    let result =
-        sqlx::query_as::<_, UserModel>("SELECT * FROM users WHERE username = $1 OR email = $1")
-            .bind(payload.username)
-            .fetch_optional(&*state.db)
-            .await
-            .map_err(|_| AppError::InternalError)?;
+    let result = state
+        .user_service
+        .get_user_by_either_email_or_username(payload.username)
+        .await?;
 
     let user = match result {
         Some(user) => user,
@@ -57,6 +54,5 @@ pub async fn login(
 
     Ok(AppSuccess::OK {
         data: Some(serde_json::to_string(&user).unwrap()),
-    }
-    .into_response())
+    })
 }

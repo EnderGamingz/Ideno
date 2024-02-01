@@ -228,7 +228,6 @@ const user_api = {
   },
 
   profile: profile_auth_api,
-
   admin: admin_api,
 };
 

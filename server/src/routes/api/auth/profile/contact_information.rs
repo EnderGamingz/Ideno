@@ -1,14 +1,13 @@
 use axum::extract::{Path, State};
-use axum::http::StatusCode;
-use axum::response::{IntoResponse, Response};
+use axum::response::IntoResponse;
 use axum::Json;
 use tower_sessions::Session;
 
-use crate::auth::check_user::check_user;
-use crate::models::contact_information::ContactInformationModel;
-use crate::models::user::UserModel;
 use crate::response::error_handling::AppError;
 use crate::response::success_handling::AppSuccess;
+use crate::services::contact_information_service::{
+    AddContactInformationPayload, UpdateContactInformationPayload,
+};
 use crate::AppState;
 
 enum ContactType {
@@ -41,27 +40,15 @@ impl ContactType {
 pub async fn get_contact_information(
     State(state): State<AppState>,
     session: Session,
-) -> Result<impl IntoResponse, AppError> {
-    let user = check_user(&session, &*state.db).await?;
+) -> Result<Json<serde_json::Value>, AppError> {
+    let user = state.user_service.check_user(&session).await?;
 
-    let contact_information = sqlx::query_as::<_, ContactInformationModel>(
-        "SELECT * FROM contact_information WHERE user_id = $1",
-    )
-    .bind(user.id)
-    .fetch_all(&*state.db)
-    .await
-    .map_err(|_| AppError::InternalError)?;
+    let contact_information = state
+        .contact_information_service
+        .get_all_contact_information(user.id)
+        .await?;
 
-    Ok(Response::builder()
-        .status(StatusCode::OK)
-        .body(serde_json::to_string(&contact_information).unwrap())
-        .unwrap())
-}
-
-#[derive(serde::Serialize, serde::Deserialize)]
-pub struct AddContactInformationPayload {
-    contact_type: String,
-    value: String,
+    Ok(Json(serde_json::to_value(contact_information).unwrap()))
 }
 
 pub async fn add_contact_information(
@@ -69,16 +56,14 @@ pub async fn add_contact_information(
     session: Session,
     Json(payload): Json<AddContactInformationPayload>,
 ) -> Result<impl IntoResponse, AppError> {
-    let user = check_user(&session, &*state.db).await?;
+    let user = state.user_service.check_user(&session).await?;
 
-    let count =
-        sqlx::query_as::<_, (i64,)>("SELECT COUNT(*) FROM contact_information WHERE user_id = $1")
-            .bind(user.id)
-            .fetch_one(&*state.db)
-            .await
-            .map_err(|_| AppError::InternalError)?;
+    let count = state
+        .contact_information_service
+        .get_contact_information_count(user.id)
+        .await?;
 
-    if count.0 >= 50 {
+    if count >= 50 {
         return Err(AppError::DataConflict {
             error: "Contact information limit reached".to_string(),
         });
@@ -91,39 +76,25 @@ pub async fn add_contact_information(
         });
     }
 
-    let contact_info_result = sqlx::query_as::<_, ContactInformationModel>(
-        "SELECT * FROM contact_information WHERE user_id = $1 AND type_field = $2 AND value = $3 LIMIT 1",
-    )
-    .bind(user.id)
-    .bind(&payload.contact_type)
-    .bind(&payload.value)
-    .fetch_all(&*state.db)
-    .await
-    .map_err(|_| AppError::InternalError)?;
+    let contact_information_exists = state
+        .contact_information_service
+        .get_existing_contact_information(user.id, &payload)
+        .await?;
 
-    if !contact_info_result.is_empty() {
+    if contact_information_exists {
         return Err(AppError::DataConflict {
             error: "Contact information already exists".to_string(),
         });
     }
 
-    let new_contact_info = sqlx::query_as::<_, (i64,)>("INSERT INTO contact_information (user_id, type_field, value) VALUES ($1, $2, $3) RETURNING id")
-        .bind(user.id)
-        .bind(payload.contact_type)
-        .bind(payload.value)
-        .fetch_one(&*state.db)
-        .await
-        .map_err(|_| AppError::InternalError)?;
+    let created_id = state
+        .contact_information_service
+        .create_contact_information(user.id, payload)
+        .await?;
 
     Ok(AppSuccess::CREATED {
-        id: Some(new_contact_info.0),
+        id: Some(created_id),
     })
-}
-
-#[derive(serde::Serialize, serde::Deserialize)]
-pub struct UpdateContactInformationPayload {
-    contact_type: String,
-    value: String,
 }
 
 pub async fn update_contact_information(
@@ -132,9 +103,12 @@ pub async fn update_contact_information(
     Path(id): Path<i32>,
     Json(payload): Json<UpdateContactInformationPayload>,
 ) -> Result<impl IntoResponse, AppError> {
-    let user = check_user(&session, &*state.db).await?;
+    let user = state.user_service.check_user(&session).await?;
 
-    contact_info_exists_for_user_id(&state, id, &user).await?;
+    state
+        .contact_information_service
+        .user_owns_contact_information(user.id, id)
+        .await?;
 
     let contact_type = ContactType::from_str(&payload.contact_type);
     if contact_type.is_none() {
@@ -143,16 +117,10 @@ pub async fn update_contact_information(
         });
     }
 
-    sqlx::query(
-        "UPDATE contact_information SET type_field = $1, value = $2 WHERE id = $3 AND user_id = $4",
-    )
-    .bind(payload.contact_type)
-    .bind(payload.value)
-    .bind(id)
-    .bind(user.id)
-    .execute(&*state.db)
-    .await
-    .map_err(|_| AppError::InternalError)?;
+    state
+        .contact_information_service
+        .update_contact_information(user.id, id, payload)
+        .await?;
 
     Ok(AppSuccess::UPDATED)
 }
@@ -162,40 +130,17 @@ pub async fn delete_contact_information(
     session: Session,
     Path(id): Path<i32>,
 ) -> Result<impl IntoResponse, AppError> {
-    let user = check_user(&session, &*state.db).await?;
+    let user = state.user_service.check_user(&session).await?;
 
-    contact_info_exists_for_user_id(&state, id, &user).await?;
+    state
+        .contact_information_service
+        .user_owns_contact_information(user.id, id)
+        .await?;
 
-    sqlx::query("DELETE FROM contact_information WHERE id = $1 AND user_id = $2")
-        .bind(id)
-        .bind(user.id)
-        .execute(&*state.db)
-        .await
-        .map_err(|_| AppError::InternalError)?;
+    state
+        .contact_information_service
+        .delete_contact_information(user.id, id)
+        .await?;
 
     Ok(AppSuccess::DELETED)
-}
-
-async fn contact_info_exists_for_user_id(
-    state: &AppState,
-    payload: i32,
-    user: &UserModel,
-) -> Result<Option<bool>, AppError> {
-    let flag = sqlx::query_as::<_, (i64,)>(
-        "SELECT COUNT(*) FROM contact_information WHERE id = $1 AND user_id = $2",
-    )
-    .bind(payload)
-    .bind(user.id)
-    .fetch_one(&*state.db)
-    .await
-    .map_err(|_| AppError::InternalError)
-    .map_or_else(|_| None, |count| Some(count.0 > 0));
-
-    if !flag.unwrap() {
-        return Err(AppError::NotFound {
-            error: "Contact information not found".to_string(),
-        });
-    }
-
-    Ok(flag)
 }

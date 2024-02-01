@@ -1,3 +1,4 @@
+use crate::services::session_service::SessionService;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use tower_sessions::Session;
@@ -9,6 +10,6 @@ pub async fn logout(session: Session) -> impl IntoResponse {
         return StatusCode::NOT_MODIFIED.into_response();
     }
 
-    session.flush().await.unwrap();
+    SessionService::flush_session(&session).await;
     StatusCode::OK.into_response()
 }

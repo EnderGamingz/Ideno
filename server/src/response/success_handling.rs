@@ -30,8 +30,7 @@ impl IntoResponse for AppSuccess {
                     body = id.to_string();
                 }
             }
-            Self::DELETED => status_code = StatusCode::ACCEPTED,
-            Self::UPDATED => status_code = StatusCode::ACCEPTED,
+            Self::DELETED | Self::UPDATED => status_code = StatusCode::ACCEPTED,
         }
 
         let response_body = AppResponseBody {

@@ -3,24 +3,42 @@ extern crate core;
 use std::net::SocketAddr;
 use std::sync::Arc;
 
+use crate::services::account_service::AccountService;
 use axum::http::header::{ACCESS_CONTROL_ALLOW_CREDENTIALS, CONTENT_TYPE};
 use axum::http::{HeaderValue, Method};
 use dotenv::dotenv;
+use sqlx::sqlite::SqliteQueryResult;
 use sqlx::{Pool, Sqlite, SqlitePool};
 use tower_http::cors::CorsLayer;
 use tower_sessions::cookie::time::Duration;
 use tower_sessions::{Expiry, MemoryStore, SessionManagerLayer};
 
-mod auth;
+use crate::services::certification_service::CertificationService;
+use crate::services::contact_information_service::ContactInformationService;
+use crate::services::education_service::EducationService;
+use crate::services::experience_service::ExperienceService;
+use crate::services::profile_service::ProfileService;
+use crate::services::user_service::UserService;
+
 mod models;
 mod response;
 mod router;
 mod routes;
-mod utils;
+mod services;
+
+pub type IdenoPool = Pool<Sqlite>;
+pub type IdenoDBResult = SqliteQueryResult;
 
 #[derive(Clone)]
 pub struct AppState {
-    db: Arc<Pool<Sqlite>>,
+    db: Arc<IdenoPool>,
+    user_service: UserService,
+    profile_service: ProfileService,
+    account_service: AccountService,
+    certification_service: CertificationService,
+    contact_information_service: ContactInformationService,
+    education_service: EducationService,
+    experience_service: ExperienceService,
 }
 
 #[tokio::main]
@@ -64,9 +82,30 @@ async fn main() {
 
     sqlx::migrate!().run(&db).await.unwrap();
 
+    tracing::info!(name: "bootstrap", "Migrated database");
+
+    tracing::info!(name: "bootstrap", "Starting server");
+
+    let user_service = UserService::new(db.clone());
+    let profile_service = ProfileService::new(db.clone());
+    let account_service = AccountService::new(db.clone());
+    let certification_service = CertificationService::new(db.clone());
+    let contact_information_service = ContactInformationService::new(db.clone());
+    let education_service = EducationService::new(db.clone());
+    let experience_service = ExperienceService::new(db.clone());
+
     let db = Arc::new(db);
 
-    let state = AppState { db };
+    let state = AppState {
+        db,
+        user_service,
+        profile_service,
+        account_service,
+        certification_service,
+        contact_information_service,
+        education_service,
+        experience_service,
+    };
 
     let router = router::router(cors, session_layer, state);
 
