@@ -63,7 +63,6 @@ export function ExperienceItem({
       ? formatDistanceToNow(data.start_date)
       : formatDistance(data.start_date, data.end_date!)
     : undefined;
-  console.log(experienceDuration);
   return (
     <Box
       css={{

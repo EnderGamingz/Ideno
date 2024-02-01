@@ -2,16 +2,7 @@
 
 import { z } from 'zod';
 import API from '@/lib/api';
-
-const customDate = z.string().refine(
-  value => {
-    if (value.length === 0) return true;
-    return !isNaN(Date.parse(value));
-  },
-  {
-    message: 'Invalid date format',
-  },
-);
+import { customDate } from '@/utils/parsing';
 
 const schema = z.object({
   name: z.string().min(1),
