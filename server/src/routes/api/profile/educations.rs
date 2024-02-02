@@ -24,7 +24,7 @@ pub async fn get_public_educations(
         _ => {
             let educations = state
                 .education_service
-                .get_public_educations(user.id)
+                .get_public_educations(user.id, None)
                 .await?;
             serde_json::to_value(&educations).unwrap()
         }

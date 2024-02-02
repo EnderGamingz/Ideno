@@ -47,7 +47,8 @@ impl ExperienceService {
                 exp_type,
                 description
               FROM experiences
-              WHERE user_id = ?",
+              WHERE user_id = ?
+              ORDER BY created_at DESC",
         )
         .bind(user_id)
         .fetch_all(&self.db_pool)
@@ -58,7 +59,9 @@ impl ExperienceService {
     pub async fn get_public_experiences(
         &self,
         user_id: i32,
+        limit: Option<i32>,
     ) -> Result<Vec<PublicExperienceModel>, AppError> {
+        let limit = limit.unwrap_or(-1);
         sqlx::query_as::<_, PublicExperienceModel>(
             "SELECT
                 company,
@@ -68,9 +71,12 @@ impl ExperienceService {
                 exp_type,
                 description
               FROM experiences
-              WHERE user_id = ?",
+              WHERE user_id = $1
+              ORDER BY created_at DESC
+              LIMIT $2",
         )
         .bind(user_id)
+        .bind(limit)
         .fetch_all(&self.db_pool)
         .await
         .map_err(|_| AppError::InternalError)
@@ -183,11 +189,13 @@ impl ExperienceService {
         &self,
         user_id: i32,
     ) -> Result<Vec<ExperienceModel>, AppError> {
-        sqlx::query_as::<_, ExperienceModel>("SELECT * FROM experiences WHERE user_id = $1")
-            .bind(user_id)
-            .fetch_all(&self.db_pool)
-            .await
-            .map_err(|_| AppError::InternalError)
+        sqlx::query_as::<_, ExperienceModel>(
+            "SELECT * FROM experiences WHERE user_id = $1 ORDER BY created_at DESC",
+        )
+        .bind(user_id)
+        .fetch_all(&self.db_pool)
+        .await
+        .map_err(|_| AppError::InternalError)
     }
 
     pub async fn admin_delete_experience(&self, experience_id: i32) -> Result<(), AppError> {

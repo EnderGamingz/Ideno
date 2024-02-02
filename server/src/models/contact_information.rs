@@ -15,3 +15,10 @@ pub struct PublicContactInformationModel {
     pub type_field: String,
     pub value: String,
 }
+
+#[derive(Clone, FromRow, Debug, Serialize)]
+pub struct AuthContactInformationModel {
+    pub id: i32,
+    pub type_field: String,
+    pub value: String,
+}

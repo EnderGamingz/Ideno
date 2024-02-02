@@ -2,10 +2,6 @@ use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 
-use crate::models::certification::PublicCertificationModel;
-use crate::models::contact_information::PublicContactInformationModel;
-use crate::models::education::PublicEducationModel;
-use crate::models::experience::PublicExperienceModel;
 use crate::models::profile::PublicProfileResponse;
 use crate::response::error_handling::AppError;
 use crate::AppState;
@@ -17,67 +13,22 @@ pub async fn get_public_profile(
     let user = state.user_service.get_user_by_username(identifier).await?;
     let found_profile = state.profile_service.get_public_profile(user.id).await?;
 
-    let certifications = sqlx::query_as::<_, PublicCertificationModel>(
-        "SELECT
-                name,
-                organization,
-                issue_date,
-                expiration_date,
-                credential_id,
-                credential_url
-              FROM certification
-              WHERE user_id = ?
-              LIMIT 3",
-    )
-    .bind(user.id)
-    .fetch_all(&*state.db)
-    .await
-    .map_err(|_| AppError::InternalError)?;
-
-    let educations = sqlx::query_as::<_, PublicEducationModel>(
-        "SELECT
-                school,
-                degree,
-                field,
-                start_date,
-                end_date
-            FROM educations
-            WHERE user_id = ?
-            LIMIT 3",
-    )
-    .bind(user.id)
-    .fetch_all(&*state.db)
-    .await
-    .map_err(|_| AppError::InternalError)?;
-
-    let experiences = sqlx::query_as::<_, PublicExperienceModel>(
-        "SELECT
-                company,
-                title,
-                start_date,
-                end_date,
-                exp_type,
-                description
-            FROM experiences
-            WHERE user_id = ?
-            LIMIT 3",
-    )
-    .bind(user.id)
-    .fetch_all(&*state.db)
-    .await
-    .map_err(|_| AppError::InternalError)?;
-
-    let contact_information = sqlx::query_as::<_, PublicContactInformationModel>(
-        "SELECT
-                type_field,
-                value
-            FROM contact_information
-            WHERE user_id = ?",
-    )
-    .bind(user.id)
-    .fetch_all(&*state.db)
-    .await
-    .map_err(|_| AppError::InternalError)?;
+    let certifications = state
+        .certification_service
+        .get_public_certifications(user.id, Some(3))
+        .await?;
+    let educations = state
+        .education_service
+        .get_public_educations(user.id, Some(3))
+        .await?;
+    let experiences = state
+        .experience_service
+        .get_public_experiences(user.id, Some(3))
+        .await?;
+    let contact_information = state
+        .contact_information_service
+        .get_public_contact_information(user.id, Some(3))
+        .await?;
 
     let response = PublicProfileResponse {
         profile: found_profile,

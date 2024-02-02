@@ -1,9 +1,7 @@
 extern crate core;
 
 use std::net::SocketAddr;
-use std::sync::Arc;
 
-use crate::services::account_service::AccountService;
 use axum::http::header::{ACCESS_CONTROL_ALLOW_CREDENTIALS, CONTENT_TYPE};
 use axum::http::{HeaderValue, Method};
 use dotenv::dotenv;
@@ -13,6 +11,7 @@ use tower_http::cors::CorsLayer;
 use tower_sessions::cookie::time::Duration;
 use tower_sessions::{Expiry, MemoryStore, SessionManagerLayer};
 
+use crate::services::account_service::AccountService;
 use crate::services::certification_service::CertificationService;
 use crate::services::contact_information_service::ContactInformationService;
 use crate::services::education_service::EducationService;
@@ -31,7 +30,6 @@ pub type IdenoDBResult = SqliteQueryResult;
 
 #[derive(Clone)]
 pub struct AppState {
-    db: Arc<IdenoPool>,
     user_service: UserService,
     profile_service: ProfileService,
     account_service: AccountService,
@@ -94,10 +92,7 @@ async fn main() {
     let education_service = EducationService::new(db.clone());
     let experience_service = ExperienceService::new(db.clone());
 
-    let db = Arc::new(db);
-
     let state = AppState {
-        db,
         user_service,
         profile_service,
         account_service,

@@ -48,7 +48,8 @@ impl CertificationService {
                 credential_id,
                 credential_url
               FROM certification
-              WHERE user_id = ?",
+              WHERE user_id = ?
+              ORDER BY created_at DESC",
         )
         .bind(user_id)
         .fetch_all(&self.db_pool)
@@ -59,7 +60,9 @@ impl CertificationService {
     pub async fn get_public_certifications(
         &self,
         user_id: i32,
+        limit: Option<i32>,
     ) -> Result<Vec<PublicCertificationModel>, AppError> {
+        let limit = limit.unwrap_or(-1);
         sqlx::query_as::<_, PublicCertificationModel>(
             "SELECT
                 name,
@@ -69,9 +72,12 @@ impl CertificationService {
                 credential_id,
                 credential_url
               FROM certification
-              WHERE user_id = ?",
+              WHERE user_id = $1
+              ORDER BY created_at DESC
+              LIMIT $2",
         )
         .bind(user_id)
+        .bind(limit)
         .fetch_all(&self.db_pool)
         .await
         .map_err(|_| AppError::InternalError)
@@ -165,7 +171,7 @@ impl CertificationService {
         &self,
         user_id: i32,
     ) -> Result<Vec<CertificationModel>, AppError> {
-        sqlx::query_as::<_, CertificationModel>("SELECT * FROM certification WHERE user_id = $1")
+        sqlx::query_as::<_, CertificationModel>("SELECT * FROM certification WHERE user_id = $1 ORDER BY created_at DESC")
             .bind(user_id)
             .fetch_all(&self.db_pool)
             .await

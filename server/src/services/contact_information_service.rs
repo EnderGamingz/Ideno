@@ -1,4 +1,6 @@
-use crate::models::contact_information::ContactInformationModel;
+use crate::models::contact_information::{
+    AuthContactInformationModel, ContactInformationModel, PublicContactInformationModel,
+};
 use crate::response::error_handling::AppError;
 use crate::{IdenoDBResult, IdenoPool};
 
@@ -22,6 +24,47 @@ pub struct ContactInformationService {
 impl ContactInformationService {
     pub fn new(db_pool: IdenoPool) -> Self {
         ContactInformationService { db_pool }
+    }
+
+    pub async fn get_authenticated_contact_information(
+        &self,
+        user_id: i32,
+    ) -> Result<Vec<AuthContactInformationModel>, AppError> {
+        sqlx::query_as::<_, AuthContactInformationModel>(
+            "SELECT
+                id,
+                type_field,
+                value
+                FROM contact_information
+                WHERE user_id = $1
+                ORDER BY created_at DESC",
+        )
+        .bind(&user_id)
+        .fetch_all(&self.db_pool)
+        .await
+        .map_err(|_| AppError::InternalError)
+    }
+
+    pub async fn get_public_contact_information(
+        &self,
+        user_id: i32,
+        limit: Option<i32>,
+    ) -> Result<Vec<PublicContactInformationModel>, AppError> {
+        let limit = limit.unwrap_or(-1);
+        sqlx::query_as::<_, PublicContactInformationModel>(
+            "SELECT
+                type_field,
+                value
+                FROM contact_information
+                WHERE user_id = $1
+                ORDER BY created_at DESC
+                LIMIT $2",
+        )
+        .bind(&user_id)
+        .bind(&limit)
+        .fetch_all(&self.db_pool)
+        .await
+        .map_err(|_| AppError::InternalError)
     }
 
     pub async fn user_owns_contact_information(
@@ -123,7 +166,7 @@ impl ContactInformationService {
         user_id: i32,
     ) -> Result<Vec<ContactInformationModel>, AppError> {
         sqlx::query_as::<_, ContactInformationModel>(
-            "SELECT * FROM contact_information WHERE user_id = $1",
+            "SELECT * FROM contact_information WHERE user_id = $1 ORDER BY created_at DESC",
         )
         .bind(user_id)
         .fetch_all(&self.db_pool)

@@ -24,7 +24,7 @@ pub async fn get_public_certifications(
         _ => {
             let certifications = state
                 .certification_service
-                .get_public_certifications(user.id)
+                .get_public_certifications(user.id, None)
                 .await?;
             serde_json::to_value(&certifications).unwrap()
         }

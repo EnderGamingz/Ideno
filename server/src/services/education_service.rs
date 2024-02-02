@@ -43,7 +43,8 @@ impl EducationService {
                 start_date,
                 end_date
               FROM educations
-              WHERE user_id = ?",
+              WHERE user_id = ?
+              ORDER BY created_at DESC",
         )
         .bind(user_id)
         .fetch_all(&self.db_pool)
@@ -54,7 +55,9 @@ impl EducationService {
     pub async fn get_public_educations(
         &self,
         user_id: i32,
+        limit: Option<i32>,
     ) -> Result<Vec<PublicEducationModel>, AppError> {
+        let limit = limit.unwrap_or(-1);
         sqlx::query_as::<_, PublicEducationModel>(
             "SELECT
                 school,
@@ -63,9 +66,12 @@ impl EducationService {
                 start_date,
                 end_date
               FROM educations
-              WHERE user_id = ?",
+              WHERE user_id = $1
+              ORDER BY created_at DESC
+              LIMIT $2",
         )
         .bind(user_id)
+        .bind(limit)
         .fetch_all(&self.db_pool)
         .await
         .map_err(|_| AppError::InternalError)
@@ -153,11 +159,13 @@ impl EducationService {
     }
 
     pub async fn get_all_educations(&self, user_id: i32) -> Result<Vec<EducationModel>, AppError> {
-        sqlx::query_as::<_, EducationModel>("SELECT * FROM educations WHERE user_id = $1")
-            .bind(user_id)
-            .fetch_all(&self.db_pool)
-            .await
-            .map_err(|_| AppError::InternalError)
+        sqlx::query_as::<_, EducationModel>(
+            "SELECT * FROM educations WHERE user_id = $1 ORDER BY created_at DESC",
+        )
+        .bind(user_id)
+        .fetch_all(&self.db_pool)
+        .await
+        .map_err(|_| AppError::InternalError)
     }
 
     pub async fn admin_delete_education(&self, education_id: i32) -> Result<(), AppError> {
