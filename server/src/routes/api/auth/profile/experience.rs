@@ -8,6 +8,7 @@ use crate::response::success_handling::AppSuccess;
 use crate::services::experience_service::{AddExperiencePayload, UpdateExperiencePayload};
 use crate::AppState;
 
+#[derive(PartialEq, Debug)]
 pub enum ExperienceType {
     FullTime,
     PartTime,
@@ -36,6 +37,28 @@ impl ExperienceType {
             "Other" => Some(ExperienceType::Other),
             _ => None,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::ExperienceType;
+
+    #[test]
+    fn test_from_str() {
+        assert_eq!(ExperienceType::from_str("Full Time"), Some(ExperienceType::FullTime));
+        assert_eq!(ExperienceType::from_str("Part Time"), Some(ExperienceType::PartTime));
+        assert_eq!(ExperienceType::from_str("Self Employed"), Some(ExperienceType::SelfEmployed));
+        assert_eq!(ExperienceType::from_str("Freelance"), Some(ExperienceType::Freelance));
+        assert_eq!(ExperienceType::from_str("Contract"), Some(ExperienceType::Contract));
+        assert_eq!(ExperienceType::from_str("Internship"), Some(ExperienceType::Internship));
+        assert_eq!(ExperienceType::from_str("Volunteering"), Some(ExperienceType::Volunteering));
+        assert_eq!(ExperienceType::from_str("Seasonal"), Some(ExperienceType::Seasonal));
+        assert_eq!(ExperienceType::from_str("Apprenticeship"), Some(ExperienceType::Apprenticeship));
+        assert_eq!(ExperienceType::from_str("Other"), Some(ExperienceType::Other));
+
+        // Test with a string that is not a contact type
+        assert_eq!(ExperienceType::from_str("invalid"), None);
     }
 }
 

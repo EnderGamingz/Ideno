@@ -10,6 +10,7 @@ use crate::services::contact_information_service::{
 };
 use crate::AppState;
 
+#[derive(PartialEq, Debug)]
 enum ContactType {
     Email,
     Phone,
@@ -34,6 +35,26 @@ impl ContactType {
             "instagram" => Some(ContactType::Instagram),
             _ => None,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::ContactType;
+
+    #[test]
+    fn test_from_str() {
+        assert_eq!(ContactType::from_str("email"), Some(ContactType::Email));
+        assert_eq!(ContactType::from_str("phone"), Some(ContactType::Phone));
+        assert_eq!(ContactType::from_str("website"), Some(ContactType::Website));
+        assert_eq!(ContactType::from_str("linkedin"), Some(ContactType::LinkedIn));
+        assert_eq!(ContactType::from_str("github"), Some(ContactType::GitHub));
+        assert_eq!(ContactType::from_str("twitter"), Some(ContactType::Twitter));
+        assert_eq!(ContactType::from_str("facebook"), Some(ContactType::Facebook));
+        assert_eq!(ContactType::from_str("instagram"), Some(ContactType::Instagram));
+
+        // Test with a string that is not a contact type
+        assert_eq!(ContactType::from_str("invalid"), None);
     }
 }
 
