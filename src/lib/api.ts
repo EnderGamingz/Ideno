@@ -256,6 +256,14 @@ const profile_public_api = {
       return (await res.json()) as AuthExperienceModel[];
     });
   },
+  async getContactInformationByUsername(name: string) {
+    return await API.get(`profile/${name}/contact-information`).then(
+      async res => {
+        if (!res.ok) return undefined;
+        return (await res.json()) as ContactInformationModel;
+      },
+    );
+  },
 };
 
 export default class API {

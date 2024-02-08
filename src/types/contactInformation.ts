@@ -11,6 +11,11 @@ export interface PublicContactInformationModel {
   value: string;
 }
 
+export interface AuthContactInformationModel
+  extends PublicContactInformationModel {
+  id?: number;
+}
+
 export interface AddContactInformationPayload {
   contact_type: string;
   value: string;

@@ -2,6 +2,7 @@ import { PublicProfileResponse } from '@/types/profile';
 import { Card } from '@/app/profile/_components/card';
 import { Box, Divider, HStack, styled } from '@/styling/jsx';
 import EditProfileDialog from '@/app/profile/_components/profile/editProfileDialog';
+import AddContactInformationDialog from '@/app/profile/_components/contactInformation/addContactInformationDialog';
 
 export function ProfileCard({
   username,
@@ -53,6 +54,11 @@ export function ProfileCard({
           </styled.h3>
           <styled.p whiteSpace={'pre-wrap'}>{profile.bio}</styled.p>
         </Box>
+      )}
+      {!!data.contact_information.length ? (
+        <></>
+      ) : (
+        <AddContactInformationDialog />
       )}
     </Card>
   );

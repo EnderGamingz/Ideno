@@ -4,7 +4,7 @@ import { PublicExperienceModel } from '@/types/experience';
 import { PublicContactInformationModel } from '@/types/contactInformation';
 
 export interface ProfileModel {
-  userId: number;
+  user_id: number;
   first_name?: string;
   last_name?: string;
   pronouns?: string;
@@ -12,7 +12,7 @@ export interface ProfileModel {
   country?: string;
   city?: string;
   bio?: string;
-  createdAt: string;
+  created_at: string;
 }
 
 export interface PublicProfileModel {
@@ -30,7 +30,7 @@ export interface PublicProfileResponse {
   certification: PublicCertificationModel[];
   education: PublicEducationModel[];
   experience: PublicExperienceModel[];
-  contactInformation: PublicContactInformationModel[];
+  contact_information: PublicContactInformationModel[];
 }
 
 export interface ProfileUpdatePayload {

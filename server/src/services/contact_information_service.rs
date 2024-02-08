@@ -4,7 +4,7 @@ use crate::models::contact_information::{
 use crate::response::error_handling::AppError;
 use crate::{IdenoDBResult, IdenoPool};
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize, Debug)]
 pub struct AddContactInformationPayload {
     pub contact_type: String,
     pub value: String,
@@ -140,8 +140,8 @@ impl ContactInformationService {
         user_id: i32,
         data: &AddContactInformationPayload,
     ) -> Result<bool, AppError> {
-        sqlx::query_as::<_, ContactInformationModel>(
-            "SELECT COUNT(*) FROM contact_information WHERE user_id = $1 AND type_field = $2 AND value = $3 LIMIT 1",
+        sqlx::query_as::<_, (i64,)>(
+            "SELECT id FROM contact_information WHERE user_id = $1 AND type_field = $2 AND value = $3 LIMIT 1",
         )
             .bind(user_id)
             .bind(&data.contact_type)

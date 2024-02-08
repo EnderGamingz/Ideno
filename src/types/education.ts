@@ -1,6 +1,6 @@
 export interface EducationModel {
   id: number;
-  userId: number;
+  user_id: number;
   school: string;
   degree?: string;
   field?: string;
