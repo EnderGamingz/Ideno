@@ -51,7 +51,7 @@ export const button = cva({
         rounded: 'md',
       },
       iconRound: {
-        p: 2,
+        p: 1.5,
         aspectRatio: 1,
         rounded: 'full',
       },

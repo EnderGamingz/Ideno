@@ -124,7 +124,10 @@ fn create_public_profile_routes() -> Router<AppState> {
         .route("/:id/certifications", get(get_public_certifications))
         .route("/:id/educations", get(get_public_educations))
         .route("/:id/experiences", get(get_public_experiences))
-        .route("/:id/contact-information", get(get_public_contact_information));
+        .route(
+            "/:id/contact-information",
+            get(get_public_contact_information),
+        );
 }
 
 pub fn router(
