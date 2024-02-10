@@ -5,10 +5,8 @@ import registerSubmit from '@/app/auth/register/_components/registerAction';
 import { Box } from '@/styling/jsx';
 import { BackgroundBlobs } from '@/app/_components/backgroundBlobs';
 import React from 'react';
-import {
-  CredentialForm,
-  CredentialInput,
-} from '@/app/auth/login/_components/loginForm';
+import { CredentialForm } from '@/app/auth/_components/credentialForm';
+import { CredentialInput } from '@/app/auth/_components/credentialInput';
 
 export function RegisterForm({ inDialog }: { inDialog?: boolean }) {
   const [state, formAction] = useFormState(registerSubmit, {
@@ -26,11 +24,7 @@ export function RegisterForm({ inDialog }: { inDialog?: boolean }) {
   };
 
   return (
-    <Box
-      css={{
-        display: 'grid',
-        placeItems: 'center',
-      }}>
+    <Box display={'grid'} placeItems={'center'}>
       {!inDialog && <BackgroundBlobs />}
       <CredentialForm
         inDialog={inDialog}

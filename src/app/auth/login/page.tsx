@@ -1,5 +1,21 @@
-import { LoginForm } from '@/app/auth/login/_components/loginForm';
+import React from 'react';
+import { Divider, Stack } from '@/styling/jsx';
+import Link from 'next/link';
+import { button } from '@/recipes/button';
+import Icon from '@/app/_components/icon';
 
 export default function Page() {
-  return <LoginForm />;
+  return (
+    <Stack mt={4}>
+      <Link className={button()} href={'/auth/login/passkey'}>
+        <Icon.PassKey /> Use Passkey
+      </Link>
+      <Divider opacity={0.2} />
+      <Link
+        className={button({ variant: 'secondary' })}
+        href={'/auth/login/email'}>
+        <Icon.Mail /> Login with Email
+      </Link>
+    </Stack>
+  );
 }
