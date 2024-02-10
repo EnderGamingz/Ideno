@@ -14,6 +14,7 @@ export default function TransitionWrapper({
         pos: 'absolute',
         top: '2.5rem',
         right: 0,
+        zIndex: 10,
       })}
       enter={'transition-200'}
       enterFrom={'opacity-0 scale-95'}

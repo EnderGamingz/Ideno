@@ -1,6 +1,6 @@
 import { PublicProfileResponse } from '@/types/profile';
 import { Card } from '@/app/profile/_components/card';
-import { Box, Divider, HStack, styled } from '@/styling/jsx';
+import { Box, Divider, HStack, Stack, styled } from '@/styling/jsx';
 import EditProfileDialog from '@/app/profile/_components/profile/editProfileDialog';
 import AddContactInformationDialog from '@/app/profile/_components/contactInformation/addContactInformationDialog';
 
@@ -55,11 +55,14 @@ export function ProfileCard({
           <styled.p whiteSpace={'pre-wrap'}>{profile.bio}</styled.p>
         </Box>
       )}
-      {!!data.contact_information.length ? (
-        <></>
-      ) : (
-        <AddContactInformationDialog />
-      )}
+      {
+        <HStack>
+          <AddContactInformationDialog />
+          <Stack>
+            <pre>{JSON.stringify(data.contact_information, null, 2)}</pre>
+          </Stack>
+        </HStack>
+      }
     </Card>
   );
 }
