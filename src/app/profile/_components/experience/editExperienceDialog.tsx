@@ -5,6 +5,8 @@ import { EditField } from '@/app/profile/_components/editField';
 import EditDataDialog from '@/app/_components/Dialog/editDataDialog';
 import { AuthExperienceModel } from '@/types/experience';
 import editExperienceAction from '@/app/profile/_components/experience/editEducationAction';
+import { SelectFromOptions } from '@/app/_components/selectFromOptions';
+import { experienceTypes } from '@/app/profile/_components/experience/addExperienceDialog';
 
 export default function EditExperienceDialog({
   data,
@@ -43,7 +45,13 @@ export default function EditExperienceDialog({
         type={'date'}
         value={data.end_date}
       />
-      TODO: EXP Type
+      <SelectFromOptions
+        valueOptions={experienceTypes}
+        label={'Experience Type'}
+        fieldId={'exp_type'}
+        allowNone
+        initial={data.exp_type}
+      />
     </EditDataDialog>
   );
 }

@@ -10,6 +10,7 @@ export const input = cva({
     px: 2,
     py: 1,
     resize: 'none',
+    bg: 'white',
   },
 });
 
