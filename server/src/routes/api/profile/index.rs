@@ -27,7 +27,7 @@ pub async fn get_public_profile(
         .await?;
     let contact_information = state
         .contact_information_service
-        .get_public_contact_information(user.id, Some(3))
+        .get_public_contact_information(user.id, Some(4))
         .await?;
 
     let response = PublicProfileResponse {

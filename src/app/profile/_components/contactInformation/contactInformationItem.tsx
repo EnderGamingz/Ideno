@@ -69,12 +69,20 @@ export function ContactInformationItem({
   item: AuthContactInformationModel;
 }) {
   const type = contactTypes.find(x => x[0] === item.type_field);
-  const contactIcon = getContactIcon(item.type_field)({ size: 25 });
+  const contactIcon = getContactIcon(item.type_field)({ size: 22 });
   let isClickable = type?.[2]?.clickable;
   return (
     <ConditionalWrapper
       condition={isClickable}
-      wrapper={c => <Link href={type?.[2].prefix + item.value}>{c}</Link>}>
+      wrapper={c => (
+        <Link
+          target={'_blank'}
+          referrerPolicy={'no-referrer'}
+          rel={'noopener'}
+          href={type?.[2].prefix + item.value}>
+          {c}
+        </Link>
+      )}>
       <Stack
         oct={'black/90'}
         outline={'1px solid'}
@@ -90,7 +98,7 @@ export function ContactInformationItem({
         }>
         <HStack gap={0}>
           {contactIcon}
-          <styled.h3 ml={2} fontSize={'1.3rem'}>
+          <styled.h3 ml={2} mr={'auto'} fontSize={'1.3rem'}>
             {type?.[1] ?? item.type_field}
           </styled.h3>
           {isClickable && <Icon.OpenInNew size={15} />}
