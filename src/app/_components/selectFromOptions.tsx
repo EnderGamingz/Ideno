@@ -29,12 +29,12 @@ export function SelectFromOptions({
 }): ReactNode {
   const selectedOption = initial && valueOptions.find(v => v[1] === initial);
   const [option, setOption] = useState(
-    allowNone
-      ? ''
-      : selectedOption
-        ? selectedOption[0]
-        : initial
-          ? 'custom'
+    selectedOption
+      ? selectedOption[0]
+      : initial
+        ? 'custom'
+        : allowNone
+          ? ''
           : valueOptions[0][0],
   );
 

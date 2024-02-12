@@ -165,6 +165,10 @@ impl ExperienceService {
         experience_type: &Option<String>,
     ) -> Result<bool, AppError> {
         if let Some(exp_type) = experience_type {
+            if exp_type.len() == 0 {
+                return Ok(true);
+            };
+
             let exp_type = ExperienceType::from_str(exp_type);
             if exp_type.is_none() {
                 return Err(AppError::BadRequest {
