@@ -3,6 +3,9 @@ import { Card } from '@/app/profile/_components/card';
 import { Box, Divider, HStack, Stack, styled } from '@/styling/jsx';
 import EditProfileDialog from '@/app/profile/_components/profile/editProfileDialog';
 import AddContactInformationDialog from '@/app/profile/_components/contactInformation/addContactInformationDialog';
+import Link from 'next/link';
+import { css } from '@/styling/css';
+import { ContactInformationItem } from '@/app/profile/_components/contactInformation/contactInformationItem';
 
 export function ProfileCard({
   username,
@@ -55,14 +58,37 @@ export function ProfileCard({
           <styled.p whiteSpace={'pre-wrap'}>{profile.bio}</styled.p>
         </Box>
       )}
-      {
-        <HStack>
-          <AddContactInformationDialog />
-          <Stack>
-            <pre>{JSON.stringify(data.contact_information, null, 2)}</pre>
-          </Stack>
-        </HStack>
-      }
+      <HStack justify={'space-between'} alignItems={'center'} my={2}>
+        <Stack gap={0}>
+          <styled.span fontSize={'1.2rem'} fontWeight={'medium'}>
+            Contact Information
+          </styled.span>
+          {!!data.contact_information.length && (
+            <Link
+              className={css({
+                fontSize: '0.8rem',
+                color: 'gray.600',
+              })}
+              href={username + '/contact-information'}>
+              Show All
+            </Link>
+          )}
+        </Stack>
+        <AddContactInformationDialog />
+      </HStack>
+      <Box
+        css={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+          gap: 2,
+        }}>
+        {data.contact_information.map((item, i) => (
+          <ContactInformationItem
+            item={item}
+            key={`contact-information-${item.value}-${item.type_field}-${i}`}
+          />
+        ))}
+      </Box>
     </Card>
   );
 }

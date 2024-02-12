@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Input, Select } from '@/recipes/input';
 
 /**
@@ -19,6 +19,8 @@ export function SelectFromOptions({
   fieldId,
   allowCustom,
   allowNone,
+  onCurrentValueChange,
+  valueChangeIndex = 0,
 }: {
   initial?: string;
   valueOptions: string[][];
@@ -26,6 +28,8 @@ export function SelectFromOptions({
   fieldId: string;
   allowCustom?: boolean;
   allowNone?: boolean;
+  onCurrentValueChange?: (value: string | undefined) => void;
+  valueChangeIndex: number;
 }): ReactNode {
   const selectedOption = initial && valueOptions.find(v => v[1] === initial);
   const [option, setOption] = useState(
@@ -45,6 +49,12 @@ export function SelectFromOptions({
         : ''
       : '',
   );
+  useEffect(() => {
+    if (!!onCurrentValueChange)
+      onCurrentValueChange(
+        valueOptions.find(item => item[0] === option)?.[valueChangeIndex],
+      );
+  }, [valueOptions, onCurrentValueChange, valueChangeIndex, option]);
 
   return (
     <>
