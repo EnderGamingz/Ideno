@@ -1,8 +1,10 @@
 import { AuthContactInformationModel } from '@/types/contactInformation';
 import { HStack, Stack, styled } from '@/styling/jsx';
 import Icon from '@/app/_components/icon';
-import ConditionalWrapper from '@/app/_components/ConditionalWrapper';
-import Link from 'next/link';
+import { OutsideLinkConditionalWrapper } from '@/app/_components/ConditionalWrapper';
+import EditContactInformationDialog from '@/app/profile/_components/contactInformation/editContactInformationDialog';
+import { ConfirmPopover } from '@/app/_components/Dialog/confirmPopover';
+import deleteContactInformationAction from '@/app/profile/_components/contactInformation/deleteContactInformationAction';
 
 export const contactTypes: ((string | any)[] | string[])[] = [
   [
@@ -65,24 +67,19 @@ function getContactIcon(type: string | undefined) {
 
 export function ContactInformationItem({
   item,
+  full,
 }: {
   item: AuthContactInformationModel;
+  full?: boolean;
 }) {
   const type = contactTypes.find(x => x[0] === item.type_field);
   const contactIcon = getContactIcon(item.type_field)({ size: 22 });
   let isClickable = type?.[2]?.clickable;
+  let contactLink = type?.[2]?.prefix + item.value;
   return (
-    <ConditionalWrapper
-      condition={isClickable}
-      wrapper={c => (
-        <Link
-          target={'_blank'}
-          referrerPolicy={'no-referrer'}
-          rel={'noopener'}
-          href={type?.[2].prefix + item.value}>
-          {c}
-        </Link>
-      )}>
+    <OutsideLinkConditionalWrapper
+      condition={isClickable && !full}
+      href={contactLink}>
       <Stack
         oct={'black/90'}
         outline={'1px solid'}
@@ -91,7 +88,8 @@ export function ContactInformationItem({
         shadow={'sm'}
         transition={'all 0.2s'}
         _hover={
-          isClickable && {
+          isClickable &&
+          !full && {
             shadow: 'md',
             bgct: 'primary/90',
           }
@@ -101,7 +99,34 @@ export function ContactInformationItem({
           <styled.h3 ml={2} mr={'auto'} fontSize={'1.3rem'}>
             {type?.[1] ?? item.type_field}
           </styled.h3>
-          {isClickable && <Icon.OpenInNew size={15} />}
+          <HStack>
+            {isClickable && (
+              <OutsideLinkConditionalWrapper
+                condition={full}
+                href={contactLink}>
+                <Icon.OpenInNew size={full ? 22 : 15} />
+              </OutsideLinkConditionalWrapper>
+            )}
+            {item.id && (
+              <>
+                <EditContactInformationDialog data={item} />{' '}
+                <ConfirmPopover
+                  label={'Are you sure?'}
+                  buttonEl={<Icon.Delete />}
+                  confirm={{
+                    action: deleteContactInformationAction,
+                    actionPayload: item.id,
+                    refresh: true,
+                    button: (
+                      <>
+                        <Icon.Delete /> Delete
+                      </>
+                    ),
+                  }}
+                />
+              </>
+            )}
+          </HStack>
         </HStack>
         <Stack gap={0} px={1}>
           <styled.span fontWeight={'bold'}>
@@ -110,6 +135,6 @@ export function ContactInformationItem({
           </styled.span>
         </Stack>
       </Stack>
-    </ConditionalWrapper>
+    </OutsideLinkConditionalWrapper>
   );
 }

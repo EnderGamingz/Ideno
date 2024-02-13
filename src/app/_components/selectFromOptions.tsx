@@ -31,7 +31,8 @@ export function SelectFromOptions({
   onCurrentValueChange?: (value: string | undefined) => void;
   valueChangeIndex: number;
 }): ReactNode {
-  const selectedOption = initial && valueOptions.find(v => v[1] === initial);
+  const selectedOption =
+    initial && valueOptions.find(v => v[1] === initial || v[0] === initial);
   const [option, setOption] = useState(
     selectedOption
       ? selectedOption[0]

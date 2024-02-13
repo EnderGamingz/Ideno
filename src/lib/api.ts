@@ -260,7 +260,7 @@ const profile_public_api = {
     return await API.get(`profile/${name}/contact-information`).then(
       async res => {
         if (!res.ok) return undefined;
-        return (await res.json()) as ContactInformationModel;
+        return (await res.json()) as ContactInformationModel[];
       },
     );
   },
