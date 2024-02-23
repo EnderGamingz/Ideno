@@ -68,9 +68,11 @@ function getContactIcon(type: string | undefined) {
 export function ContactInformationItem({
   item,
   full,
+  last,
 }: {
   item: AuthContactInformationModel;
   full?: boolean;
+  last?: boolean;
 }) {
   const type = contactTypes.find(x => x[0] === item.type_field);
   const contactIcon = getContactIcon(item.type_field)({ size: 22 });
@@ -81,12 +83,14 @@ export function ContactInformationItem({
       condition={isClickable && !full}
       href={contactLink}>
       <Stack
-        oct={'black/90'}
-        outline={'1px solid'}
-        p={1.5}
-        rounded={'md'}
-        shadow={'sm'}
+        p={2}
         transition={'all 0.2s'}
+        css={{
+          borderBottom: full && !last ? '1px solid' : 'none',
+          border: !full ? '1px solid' : 'none',
+          rounded: !full ? 'md' : 'none',
+          bct: 'black/90',
+        }}
         _hover={
           isClickable &&
           !full && {

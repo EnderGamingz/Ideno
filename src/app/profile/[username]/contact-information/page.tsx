@@ -19,6 +19,7 @@ export default async function Page({
           item={item}
           full
           key={`contact-information-${JSON.stringify(item)}-${i}`}
+          last={i === contactInformation.length - 1}
         />
       ))}
     </Container>
