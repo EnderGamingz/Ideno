@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { button } from '@/recipes/button';
 import auth from 'auth';
 import LogoutButton from '@/app/_components/header/logoutButton';
+import Icon from '@/app/_components/icon';
 
 export default async function Header() {
   const user = await auth();
@@ -52,6 +53,11 @@ export default async function Header() {
           <>
             <Link className={button()} href={`/profile/${user.username}`}>
               Profile
+            </Link>
+            <Link
+              className={button({ contentType: 'icon' })}
+              href={`/auth/settings`}>
+              <Icon.Settings />
             </Link>
             <LogoutButton />
           </>
