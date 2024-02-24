@@ -23,7 +23,6 @@ import {
 } from '@/types/certification';
 import { AddEducationPayload, AuthEducationModel } from '@/types/education';
 import { AddExperiencePayload, AuthExperienceModel } from '@/types/experience';
-import { ZodOptional, ZodString } from 'zod';
 
 const api_url = `${process.env.API_URL}/api/${process.env.API_VERSION}/`;
 

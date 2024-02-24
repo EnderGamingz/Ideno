@@ -1,11 +1,9 @@
 import API from '@/lib/api';
 import { HStack } from '@/styling/jsx';
-import Button from '@/recipes/button';
 import Icon from '@/app/_components/icon';
 import { DataUpdateForm } from '@/app/_components/Dialog/dataUpdateForm';
 import updateUserAdminAction from '@/app/auth/admin/users/[id]/updateUserAction';
 import { EditField } from '@/app/profile/_components/editField';
-import LogoutAction from '@/app/_components/header/logoutAction';
 import { ConfirmPopover } from '@/app/_components/Dialog/confirmPopover';
 import deleteUserAction from '@/app/auth/admin/users/[id]/deleteUserAction';
 

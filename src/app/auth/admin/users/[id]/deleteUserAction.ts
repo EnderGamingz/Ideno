@@ -1,7 +1,5 @@
 'use server';
-import { z } from 'zod';
 import API from '@/lib/api';
-import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 export default async function deleteUserAction(id: number) {
@@ -12,6 +10,5 @@ export default async function deleteUserAction(id: number) {
       };
     }
     redirect('/auth/admin/users');
-    return { success: true };
   });
 }
