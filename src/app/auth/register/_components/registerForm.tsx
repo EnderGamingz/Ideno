@@ -24,10 +24,10 @@ export function RegisterForm() {
   };
 
   return (
-    <Box display={'grid'} placeItems={'center'}>
+    <Box display={'grid'}>
       <BackgroundBlobs />
       <CredentialForm
-        title={'Register'}
+        title={'Register new account'}
         formSubmitHandler={formAction}
         state={state}>
         <CredentialInput

@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 
 const schema = z.object({
   username: z.string().min(1),
-  email: z.string().min(1).email(),
+  email: z.string().email().min(1).email(),
   password: z.string().min(1),
 });
 

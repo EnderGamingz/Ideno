@@ -214,21 +214,29 @@ const user_api = {
             error: true,
             ...(await res.json()),
           };
-        else return (await res.json()) as ProfileModel;
+        return true;
       });
     },
     async delete() {
-      API.delete('/auth/account').then(res => {
-        if (res.ok) redirect('/api/session/clear');
+      return await API.delete('auth/account').then(async res => {
+        if (res.ok) {
+          redirect('/api/session/clear');
+        } else return { error: true };
       });
     },
   },
 
   password: {
     async update(data: PasswordUpdatePayload) {
-      return await API.patch('auth/password', data).then(
-        async res => (await res.json()) as ProfileModel,
-      );
+      return await API.patch('auth/password', data).then(async res => {
+        if (!res.ok) {
+          return {
+            error: true,
+            ...(await res.json()),
+          };
+        }
+        return true;
+      });
     },
   },
 

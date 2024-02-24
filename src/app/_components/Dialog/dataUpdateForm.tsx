@@ -1,5 +1,5 @@
 'use client';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Alert from '@/recipes/alert';
 import { HStack, Stack } from '@/styling/jsx';
@@ -11,15 +11,27 @@ export function DataUpdateForm({
   action,
   children,
   cancel = true,
+  successMessage,
 }: {
   setIsOpen?: (open: boolean) => void;
   action: (data: FormData) => any;
   children: ReactNode;
   cancel?: boolean;
+  successMessage?: string;
 }) {
   const router = useRouter();
   const [parseErrors, setParseErrors] = useState([]);
   const [error, setError] = useState<string | undefined>(undefined);
+  const [success, setSuccess] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   const isError = !!parseErrors?.length || !!error;
 
@@ -27,12 +39,19 @@ export function DataUpdateForm({
     <>
       {isError && (
         <Alert status={'error'}>
-          {parseErrors?.map((error: any) => (
-            <span key={error?.message}>
-              {error?.message} on {error?.path[0]}
-            </span>
-          ))}
-          {error && <span>{error}</span>}
+          <Stack>
+            {parseErrors?.map((error: any) => (
+              <span key={error?.message}>
+                {error?.message} on {error?.path[0]}
+              </span>
+            ))}
+            {error && <span>{error}</span>}
+          </Stack>
+        </Alert>
+      )}
+      {success && (
+        <Alert status={'success'}>
+          {successMessage ?? 'Successfully updated'}
         </Alert>
       )}
       <form
@@ -40,6 +59,7 @@ export function DataUpdateForm({
           const res = await action(data);
           if (res?.success) {
             setIsOpen && setIsOpen(false);
+            setSuccess(true);
             setParseErrors([]);
             setError(undefined);
             router.refresh();

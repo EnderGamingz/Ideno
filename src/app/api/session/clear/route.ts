@@ -4,7 +4,9 @@ import { redirect } from 'next/navigation';
 export async function GET() {
   cookies().delete('id');
 
-  redirect('/');
+  redirect('/auth/login');
 
-  return new Response('Invalid session cleared', { status: 200 });
+  return new Response('Invalid session cleared', {
+    status: 200,
+  });
 }
