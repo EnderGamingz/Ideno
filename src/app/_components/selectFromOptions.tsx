@@ -29,7 +29,7 @@ export function SelectFromOptions({
   allowCustom?: boolean;
   allowNone?: boolean;
   onCurrentValueChange?: (value: string | undefined) => void;
-  valueChangeIndex: number;
+  valueChangeIndex?: number;
 }): ReactNode {
   const selectedOption =
     initial && valueOptions.find(v => v[1] === initial || v[0] === initial);

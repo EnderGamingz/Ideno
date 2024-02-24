@@ -8,7 +8,7 @@ import React from 'react';
 import { CredentialForm } from '@/app/auth/_components/credentialForm';
 import { CredentialInput } from '@/app/auth/_components/credentialInput';
 
-export function RegisterForm({ inDialog }: { inDialog?: boolean }) {
+export function RegisterForm() {
   const [state, formAction] = useFormState(registerSubmit, {
     errors: undefined,
     success: undefined,
@@ -25,9 +25,8 @@ export function RegisterForm({ inDialog }: { inDialog?: boolean }) {
 
   return (
     <Box display={'grid'} placeItems={'center'}>
-      {!inDialog && <BackgroundBlobs />}
+      <BackgroundBlobs />
       <CredentialForm
-        inDialog={inDialog}
         title={'Register'}
         formSubmitHandler={formAction}
         state={state}>

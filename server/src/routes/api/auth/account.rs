@@ -28,15 +28,21 @@ pub async fn update_account(
         })?;
     }
 
-    let new_username_exists = state
-        .account_service
-        .username_exists(payload.username.clone().unwrap())
-        .await;
+    let new_username_exists = match &payload.username {
+        Some(username) => state
+            .account_service
+            .username_exists(username)
+            .await,
+        None => false,
+    };
 
-    let new_email_exists = state
-        .account_service
-        .email_exists(payload.email.clone().unwrap())
-        .await;
+    let new_email_exists = match &payload.email {
+        Some(email) => state
+            .account_service
+            .email_exists(email)
+            .await,
+        None => false,
+    };
 
     let new_value_type = if payload.username.is_some() {
         "username"

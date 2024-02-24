@@ -86,7 +86,7 @@ impl AccountService {
             .map_err(|_| return AppError::InternalError)
     }
 
-    pub async fn email_exists(&self, email: String) -> bool {
+    pub async fn email_exists(&self, email: &String) -> bool {
         let result = sqlx::query("SELECT id FROM users WHERE email = $1")
             .bind(email)
             .fetch_optional(&self.db_pool)
@@ -100,7 +100,7 @@ impl AccountService {
         }
     }
 
-    pub async fn username_exists(&self, username: String) -> bool {
+    pub async fn username_exists(&self, username: &String) -> bool {
         let result = sqlx::query("SELECT id FROM users WHERE username = $1")
             .bind(username)
             .fetch_optional(&self.db_pool)

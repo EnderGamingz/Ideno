@@ -87,8 +87,8 @@ export function ContactInformationItem({
         transition={'all 0.2s'}
         css={{
           borderBottom: full && !last ? '1px solid' : 'none',
-          border: !full ? '1px solid' : 'none',
-          rounded: !full ? 'md' : 'none',
+          border: !full ? '1px solid' : undefined,
+          rounded: !full ? 'md' : '',
           bct: 'black/90',
         }}
         _hover={

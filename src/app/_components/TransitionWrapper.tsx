@@ -2,17 +2,21 @@ import { Fragment, ReactNode } from 'react';
 import { Transition } from '@headlessui/react';
 import { css } from '@/styling/css';
 import { Box } from '@/styling/jsx';
+import { PopoverPosition } from '@/app/_components/Dialog/confirmPopover';
 
 export default function TransitionWrapper({
+  position = 'top',
   children,
 }: {
+  position?: PopoverPosition;
   children: ReactNode;
 }) {
   return (
     <Transition
       className={css({
         pos: 'absolute',
-        top: '2.5rem',
+        top: position === 'top' ? '2.5rem' : undefined,
+        bottom: position === 'bottom' ? '2.5rem' : undefined,
         right: 0,
         zIndex: 10,
       })}

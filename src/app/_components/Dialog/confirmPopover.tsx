@@ -8,13 +8,19 @@ import { Grid, styled } from '@/styling/jsx';
 import Icon from '@/app/_components/icon';
 import { useRouter } from 'next/navigation';
 
+export type PopoverPosition = 'top' | 'bottom';
+
 export function ConfirmPopover({
   label,
   buttonEl,
   confirm,
+  buttonType = 'icon',
+  popoverPosition,
 }: {
   label: string;
   buttonEl: ReactNode;
+  buttonType?: string;
+  popoverPosition?: PopoverPosition;
   confirm: {
     action: (data?: any) => Promise<any>;
     actionPayload?: any;
@@ -23,16 +29,23 @@ export function ConfirmPopover({
   };
 }) {
   const router = useRouter();
+
   return (
     <Popover className={css({ pos: 'relative' })}>
       <Popover.Button
-        className={button({
-          variant: 'outline',
-          contentType: 'iconRound',
-        })}>
+        className={css(
+          button.raw({
+            variant: 'outline',
+            contentType: buttonType === 'icon' ? 'iconRound' : undefined,
+          }),
+          css.raw({
+            w: 'full',
+          }),
+        )}>
         {buttonEl}
       </Popover.Button>
-      <TransitionWrapper>
+
+      <TransitionWrapper position={popoverPosition}>
         <Popover.Panel
           className={css({
             w: 'min(calc(100vw - 2rem), 300px)',

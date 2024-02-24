@@ -208,9 +208,14 @@ const user_api = {
 
   account: {
     async update(data: AccountUpdatePayload) {
-      return await API.patch('auth/account', data).then(
-        async res => (await res.json()) as ProfileModel,
-      );
+      return await API.patch('auth/account', data).then(async res => {
+        if (!res.ok)
+          return {
+            error: true,
+            ...(await res.json()),
+          };
+        else return (await res.json()) as ProfileModel;
+      });
     },
     async delete() {
       API.delete('/auth/account').then(res => {
