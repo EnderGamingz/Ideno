@@ -1,10 +1,10 @@
 use serde::{Deserialize, Serialize};
 use tower_sessions::Session;
 
-use crate::models::user::{PublicAuthUserModel, UserModel};
+use crate::{IdenoDBResult, IdenoPool};
+use crate::models::user::{UserModel};
 use crate::response::error_handling::AppError;
 use crate::services::session_service::SessionService;
-use crate::{IdenoDBResult, IdenoPool};
 
 #[derive(Serialize, Deserialize)]
 pub struct UpdateUserRequest {
@@ -66,17 +66,15 @@ impl UserService {
             .map_err(|_| AppError::InternalError)
     }
 
-    pub async fn get_public_auth_user(
+    pub async fn get_auth_user(
         &self,
         user_id: String,
-    ) -> Result<PublicAuthUserModel, AppError> {
-        sqlx::query_as::<_, PublicAuthUserModel>(
-            "SELECT id, username, email, created_at FROM users WHERE id = ?",
-        )
-        .bind(user_id)
-        .fetch_one(&self.db_pool)
-        .await
-        .map_err(|_| AppError::UserNotFound)
+    ) -> Result<UserModel, AppError> {
+        sqlx::query_as::<_, UserModel>("SELECT * FROM users WHERE id = ?")
+            .bind(user_id)
+            .fetch_one(&self.db_pool)
+            .await
+            .map_err(|_| AppError::UserNotFound)
     }
 
     pub async fn check_user_optional(

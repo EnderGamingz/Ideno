@@ -136,7 +136,7 @@ const admin_api = {
         async res => (await res.json()) as UserModel[],
       );
     },
-    async getById(id: number) {
+    async getById(id: string) {
       return await API.get(`auth/admin/users/${id}`).then(
         async res => (await res.json()) as UserModel,
       );

@@ -29,7 +29,10 @@ pub async fn register(
             let user = state.account_service.create_account(payload, hash).await?;
             state.profile_service.create_profile(user.id).await?;
         }
-        Err(_) => Err(AppError::InternalError)?,
+        Err(e) => {
+            println!("Error hashing password: {}", e);
+            Err(AppError::InternalError)?
+        },
     };
 
     Ok(AppSuccess::CREATED { id: None })

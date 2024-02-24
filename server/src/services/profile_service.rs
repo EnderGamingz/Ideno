@@ -17,7 +17,10 @@ impl ProfileService {
             .bind(user_id)
             .execute(&self.db_pool)
             .await
-            .map_err(|_| AppError::InternalError)
+            .map_err(|e| {
+                println!("Error creating profile: {}", e);
+                AppError::InternalError
+            })
     }
 
     pub async fn update_profile(

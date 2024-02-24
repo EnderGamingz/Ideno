@@ -35,7 +35,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
 
   return (
     <Grid columns={{ base: 1, md: 5 }} flexGrow={1}>
-      <GridItem colSpan={{ base: 1, md: 2 }} css={{}}>
+      <GridItem colSpan={{ base: 1, md: 2, xl: 1 }} css={{}}>
         <Stack p={3} gap={3} shadow={'md'} h={'full'}>
           <styled.h1 fontSize={'2rem'}>Settings</styled.h1>
           <Divider color={'gray.300'} />
@@ -80,8 +80,10 @@ export default async function Layout({ children }: { children: ReactNode }) {
           </Stack>
         </Stack>
       </GridItem>
-      <GridItem colSpan={{ base: 1, md: 3 }}>
-        <Container mt={4}>{children}</Container>
+      <GridItem colSpan={{ base: 1, md: 3, xl: 4 }}>
+        <Container mt={4} maxW={'3xl'}>
+          {children}
+        </Container>
       </GridItem>
     </Grid>
   );
