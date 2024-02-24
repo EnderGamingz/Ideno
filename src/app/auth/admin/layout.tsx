@@ -55,12 +55,12 @@ export default async function Layout({ children }: { children: ReactNode }) {
         w={'full'}
         maxW={'4xl'}
         css={{
-          '& > h2': {
+          '& h2': {
             fontSize: '2xl',
             mb: 2,
           },
-          '& > h3': {
-            fontSize: '2xl',
+          '& h3': {
+            fontSize: 'xl',
             mb: 2,
           },
         }}>

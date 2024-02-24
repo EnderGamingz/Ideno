@@ -9,6 +9,7 @@ import Icon from '@/app/_components/icon';
 import { useRouter } from 'next/navigation';
 
 export type PopoverPosition = 'top' | 'bottom';
+export type PopoverSide = 'left' | 'right';
 
 export function ConfirmPopover({
   label,
@@ -16,11 +17,13 @@ export function ConfirmPopover({
   confirm,
   buttonType = 'icon',
   popoverPosition,
+  popoverSide,
 }: {
   label: string;
   buttonEl: ReactNode;
   buttonType?: string;
   popoverPosition?: PopoverPosition;
+  popoverSide?: PopoverSide;
   confirm: {
     action: (data?: any) => Promise<any>;
     actionPayload?: any;
@@ -45,7 +48,7 @@ export function ConfirmPopover({
         {buttonEl}
       </Popover.Button>
 
-      <TransitionWrapper position={popoverPosition}>
+      <TransitionWrapper side={popoverSide} position={popoverPosition}>
         <Popover.Panel
           className={css({
             w: 'min(calc(100vw - 2rem), 300px)',

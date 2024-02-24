@@ -23,6 +23,7 @@ import {
 } from '@/types/certification';
 import { AddEducationPayload, AuthEducationModel } from '@/types/education';
 import { AddExperiencePayload, AuthExperienceModel } from '@/types/experience';
+import { ZodOptional, ZodString } from 'zod';
 
 const api_url = `${process.env.API_URL}/api/${process.env.API_VERSION}/`;
 
@@ -142,14 +143,16 @@ const admin_api = {
       );
     },
     async deleteById(id: number) {
-      return await API.delete(`auth/admin/users/${id}`).then(
-        async res => (await res.json()) as UserModel,
-      );
+      return await API.delete(`auth/admin/users/${id}`).then(async res => {
+        if (!res.ok) return { error: true };
+        return { success: true };
+      });
     },
     async updateById(id: number, data: AdminUpdateUserPayload) {
-      return await API.patch(`auth/admin/users/${id}`, data).then(
-        async res => (await res.json()) as UserModel,
-      );
+      return await API.patch(`auth/admin/users/${id}`, data).then(async res => {
+        if (!res.ok) return { error: true };
+        return { success: true };
+      });
     },
   },
   certification: {
