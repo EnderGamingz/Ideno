@@ -155,30 +155,38 @@ const admin_api = {
     },
   },
   certification: {
-    async deleteById(id: number) {
+    async deleteById(id: string) {
       return await API.delete(`auth/admin/certification/${id}`).then(
-        async res => (await res.json()) as UserModel,
+        async res => {
+          if (!res.ok) return { error: true };
+          return { success: true };
+        },
       );
     },
   },
   education: {
-    async deleteById(id: number) {
-      return await API.delete(`auth/admin/education/${id}`).then(
-        async res => (await res.json()) as UserModel,
-      );
+    async deleteById(id: string) {
+      return await API.delete(`auth/admin/education/${id}`).then(async res => {
+        if (!res.ok) return { error: true };
+        return { success: true };
+      });
     },
   },
   experience: {
-    async deleteById(id: number) {
-      return await API.delete(`auth/admin/experience/${id}`).then(
-        async res => (await res.json()) as UserModel,
-      );
+    async deleteById(id: string) {
+      return await API.delete(`auth/admin/experience/${id}`).then(async res => {
+        if (!res.ok) return { error: true };
+        return { success: true };
+      });
     },
   },
   contactInformation: {
-    async deleteById(id: number) {
+    async deleteById(id: string) {
       return await API.delete(`auth/admin/contact-information/${id}`).then(
-        async res => (await res.json()) as UserModel,
+        async res => {
+          if (!res.ok) return { error: true };
+          return { success: true };
+        },
       );
     },
   },

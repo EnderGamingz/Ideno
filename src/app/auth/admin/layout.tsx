@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { admin } from 'auth';
-import { ForbiddenScreen } from '@/app/_components/forbiddenScreen';
+import { ForbiddenScreen } from '@/app/auth/admin/_components/forbiddenScreen';
 import { Box, Container, HStack, styled } from '@/styling/jsx';
 import Icon from '@/app/_components/icon';
 import Link from 'next/link';
@@ -11,22 +11,6 @@ const links = [
     name: 'Users',
     href: '/auth/admin/users',
     icon: Icon.Profile,
-  },
-  {
-    name: 'Certifications',
-    href: '/auth/admin/certifications',
-  },
-  {
-    name: 'Educations',
-    href: '/auth/admin/educations',
-  },
-  {
-    name: 'Experiences',
-    href: '/auth/admin/experiences',
-  },
-  {
-    name: 'Contact Information',
-    href: '/auth/contact-information',
   },
 ];
 

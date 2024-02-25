@@ -1,53 +1,26 @@
 import API from '@/lib/api';
-import { styled } from '@/styling/jsx';
-import { UserRow } from '@/app/auth/admin/users/userRow';
+import { TableLinkRow } from '@/app/auth/admin/_components/tableLinkRow';
+import { UserModel } from '@/types/user';
+import { AdminTable } from '@/app/auth/admin/_components/adminTable';
 
 export default async function Page() {
   const users = await API.auth.admin.user.getAll();
   return (
     <>
-      <h2>UserList</h2>
-      <styled.table
-        w={'full'}
-        css={{
-          '& th,td': {
-            textAlign: 'left',
-            p: 1,
-            outline: 'none',
-          },
-          '& th:not(:last-child),td:not(:last-child)': {
-            borderRight: '1px solid lightgray',
-          },
-          '& thead': {
-            _first: {
-              borderBottom: '1px solid lightgray',
-            },
-          },
-          '& tbody tr': {
-            _odd: {
-              bgct: 'primary/90',
-            },
-            cursor: 'pointer',
-            _hover: {
-              bgct: 'secondary/90',
-            },
-          },
-        }}>
-        <styled.thead>
-          <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>role</th>
-            <th>Created At</th>
-          </tr>
-        </styled.thead>
-        <tbody>
-          {users.map(user => (
-            <UserRow user={user} key={user.id} />
-          ))}
-        </tbody>
-      </styled.table>
+      <h2>User List</h2>
+      <AdminTable
+        header={['ID', 'Username', 'Email', 'role', 'Created At']}
+        dataList={users}
+        callbackFn={(user: UserModel) => (
+          <TableLinkRow key={user.id} href={'/auth/admin/users/' + user.id}>
+            <td>{user.id}</td>
+            <td>{user.username}</td>
+            <td>{user.email}</td>
+            <td>{user.role}</td>
+            <td>{user.created_at}</td>
+          </TableLinkRow>
+        )}
+      />
     </>
   );
 }
