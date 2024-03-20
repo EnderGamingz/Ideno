@@ -13,10 +13,11 @@ export const button = cva({
     fontWeight: 'semibold',
     transition: 'all 0.2s ease-in-out',
     fontSize: '16px',
+    outlineOffset: '-3px',
+
     _hover: {
-      boxShadow: '0 2px 10px 0 rgba(0,0,0,0.2)',
       outline: '1px solid black',
-      outlineOffset: '-3px',
+      boxShadow: '0 2px 10px 0 rgba(0,0,0,0.2)',
     },
   },
   variants: {
@@ -81,9 +82,9 @@ export const button = cva({
         fontSize: '0.8rem',
       },
       large: {
-        py: '10px',
-        px: '22px',
-        fontSize: '1.2rem',
+        py: '12px',
+        px: '24px',
+        fontSize: '1.5rem',
       },
     },
   },

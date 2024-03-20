@@ -17,7 +17,14 @@ export default async function Page({
   if (!userProfile) notFound();
 
   return (
-    <Grid columns={{ base: 1, md: 2 }} p={5} gap={5} alignItems={'flex-start'}>
+    <Grid
+      maxW={'8xl'}
+      mx={'auto'}
+      w={'full'}
+      columns={{ base: 1, md: 2 }}
+      p={5}
+      gap={5}
+      alignItems={'flex-start'}>
       <ProfileCard data={userProfile} username={username} user={user} />
       <Stack>
         <CertificationCard

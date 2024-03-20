@@ -31,7 +31,7 @@ export default async function Home() {
   return (
     <Box
       css={{
-        h: 'min(100vh, 600px)',
+        h: 'min(100%, 600px)',
         maxW: '1600px',
         w: 'full',
         mx: 'auto',
@@ -39,12 +39,11 @@ export default async function Home() {
         gridTemplateColumns: { base: '1fr', lg: 'repeat(2, 1fr)' },
         color: 'text.primary',
         px: { base: '2rem', sm: '3rem', lg: '5rem' },
-        py: '4rem',
         bg: 'violet.50',
         boxShadow: '0 0 0 100vmax token(colors.violet.50)',
         clipPath: 'inset(0 -100vmax)',
       }}>
-      <Stack gap={3} maxW={'650px'}>
+      <Stack gap={3} maxW={'650px'} py={'4rem'} overflow={'hidden'}>
         <HeroTitle />
         <styled.p
           css={{
@@ -59,16 +58,59 @@ export default async function Home() {
           </Link>
         </HStack>
       </Stack>
-      <Image
-        className={css({
+      <Box
+        css={{
           hideBelow: 'lg',
-          justifySelf: 'flex-end',
-        })}
-        src={'/meet_online.svg'}
-        alt={'share online graphic'}
-        width={600}
-        height={500}
-      />
+          display: 'grid',
+          isolation: 'isolate',
+          '& > *': {
+            gridColumn: '1/-1',
+            gridRow: '1/-1',
+          },
+        }}>
+        <styled.svg
+          alignSelf={'center'}
+          zIndex={'-1'}
+          transform={'translate(50px, -80px)'}
+          viewBox={'0 0 200 200'}
+          css={{
+            w: { base: '500px', xl: '670px' },
+            aspectRatio: '1/1',
+            '& > path': {
+              fill: 'violet.200',
+              filter: 'drop-shadow(5px 5px rgba(0,0,0,0.7))',
+            },
+          }}
+          xmlns={'http://www.w3.org/2000/svg'}>
+          <path
+            stroke={'black'}
+            strokeWidth={'1.5'}
+            strokeLinecap={'round'}
+            strokeLinejoin={'round'}
+            d='M41.5,-64.1C55.7,-63.7,70.4,-56.4,77.7,-44.6C85,-32.8,84.9,-16.4,84.5,-0.2C84.2,16,83.7,32,77.1,45C70.4,58,57.7,67.9,43.8,73.9C29.9,80,15,82.1,1.4,79.7C-12.1,77.2,-24.3,70.1,-34.9,62.2C-45.5,54.3,-54.6,45.5,-62.1,35C-69.5,24.5,-75.3,12.3,-76,-0.4C-76.7,-13.1,-72.3,-26.2,-65.2,-37.1C-58,-48.1,-48,-57,-36.7,-59C-25.4,-61,-12.7,-56.1,0.5,-57C13.7,-57.9,27.3,-64.5,41.5,-64.1Z'
+            transform='translate(100 100)'
+          />
+        </styled.svg>
+        <Image
+          className={css({
+            p: 5,
+            alignSelf: 'center',
+            justifySelf: 'center',
+            transform: {
+              base: 'translate(45px, -80px)',
+              xl: 'translate(90px, -80px)}',
+            },
+            width: {
+              lgDown: '450px',
+              xl: '600px',
+            },
+          })}
+          src={'/Information.svg'}
+          alt={'share online graphic'}
+          width={500}
+          height={500}
+        />
+      </Box>
     </Box>
   );
 }
