@@ -64,6 +64,8 @@ export function Hero() {
           hideBelow: 'lg',
           display: 'grid',
           isolation: 'isolate',
+          maxH: '500px',
+          transform: 'translateY(40px)',
           '& > *': {
             gridColumn: '1/-1',
             gridRow: '1/-1',
@@ -99,7 +101,7 @@ export function Hero() {
             justifySelf: 'center',
             transform: {
               base: 'translate(45px, -80px)',
-              xl: 'translate(90px, -80px)}',
+              xl: 'translate(30px, -80px)',
             },
             width: {
               lgDown: '450px',
