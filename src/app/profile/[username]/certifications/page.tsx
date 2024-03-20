@@ -13,7 +13,7 @@ export default async function Page({
   if (!certifications) return notFound();
 
   return (
-    <Container maxWidth={'4xl'} mt={5}>
+    <Container maxWidth={'4xl'} w={'full'} mt={5}>
       {certifications.map((item, i) => (
         <CertificationItem
           key={item.name + item.organization + i}

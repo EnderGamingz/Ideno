@@ -19,6 +19,11 @@ export function ProfileCard({
   isInSettings?: boolean;
 }) {
   const profile = data.profile;
+  const isCurrentUser = username === user?.username;
+
+  const showContactInformation =
+    (!isInSettings && isCurrentUser) ||
+    (!!data.contact_information.length && !isCurrentUser);
   return (
     <Card sticky>
       <HStack justify={'space-between'}>
@@ -60,14 +65,14 @@ export function ProfileCard({
           <styled.p whiteSpace={'pre-wrap'}>{profile.bio}</styled.p>
         </Box>
       )}
-      {!isInSettings && (
+      {showContactInformation && (
         <>
           <HStack justify={'space-between'} alignItems={'center'} my={2}>
             <Stack gap={0}>
               <styled.span fontSize={'1.2rem'} fontWeight={'medium'}>
                 Contact Information
               </styled.span>
-              {!!data.contact_information.length && (
+              {isCurrentUser && (
                 <Link
                   className={css({
                     fontSize: '0.8rem',
@@ -78,23 +83,27 @@ export function ProfileCard({
                 </Link>
               )}
             </Stack>
-            <AddContactInformationDialog />
+            {isCurrentUser && <AddContactInformationDialog />}
           </HStack>
-          <Box
-            css={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-              gap: 2,
-            }}>
-            {data.contact_information.map((item, i) => (
-              <ContactInformationItem
-                item={item}
-                key={`contact-information-${item.value}-${item.type_field}-${i}`}
-              />
-            ))}
-          </Box>
+          {data.contact_information.length || isCurrentUser ? (
+            <Box
+              css={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+                gap: 2,
+              }}>
+              {data.contact_information.map((item, i) => (
+                <ContactInformationItem
+                  item={item}
+                  key={`contact-information-${item.value}-${item.type_field}-${i}`}
+                />
+              ))}
+            </Box>
+          ) : (
+            <styled.p opacity={0.5}>No contact information added</styled.p>
+          )}
         </>
-      )}{' '}
+      )}
     </Card>
   );
 }

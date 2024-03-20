@@ -41,12 +41,14 @@ export function CertificationCard({
           />
         ))}
       </Box>
-      {data.length > 0 && (
+      {data.length > 0 ? (
         <Link
           className={button({ variant: 'secondary', size: 'small' })}
           href={username + '/certifications'}>
           Show All Certifications <Icon.Forward />
         </Link>
+      ) : (
+        <styled.p opacity={0.5}>No certifications added</styled.p>
       )}
     </Card>
   );

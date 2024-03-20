@@ -13,7 +13,7 @@ export default async function Page({
   if (!contactInformation) return notFound();
 
   return (
-    <Container maxWidth={'4xl'} mt={5}>
+    <Container maxWidth={'4xl'} w={'full'} mt={5}>
       {contactInformation.map((item, i) => (
         <ContactInformationItem
           item={item}

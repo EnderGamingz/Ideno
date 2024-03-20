@@ -38,12 +38,14 @@ export function ExperienceCard({
           />
         ))}
       </Box>
-      {data.length > 0 && (
+      {data.length > 0 ? (
         <Link
           className={button({ variant: 'secondary', size: 'small' })}
           href={username + '/experiences'}>
           Show All Experiences <Icon.Forward />
         </Link>
+      ) : (
+        <styled.p opacity={0.5}>No experiences added</styled.p>
       )}
     </Card>
   );

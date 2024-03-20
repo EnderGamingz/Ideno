@@ -1,5 +1,9 @@
 @layer reset, base, tokens, recipes, utilities;
 
+html {
+    color-scheme: light;
+}
+
 body {
     scroll-behavior: smooth;
     min-height: 100vh;

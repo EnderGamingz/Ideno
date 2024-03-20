@@ -37,12 +37,14 @@ export function EducationCard({
           />
         ))}
       </Box>
-      {data.length > 0 && (
+      {data.length > 0 ? (
         <Link
           className={button({ variant: 'secondary', size: 'small' })}
           href={username + '/educations'}>
           Show All Educations <Icon.Forward />
         </Link>
+      ) : (
+        <styled.p opacity={0.5}>No educations added</styled.p>
       )}
     </Card>
   );

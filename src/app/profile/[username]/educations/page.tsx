@@ -12,7 +12,7 @@ export default async function Page({
   if (!educations) return notFound();
 
   return (
-    <Container maxWidth={'4xl'} mt={5}>
+    <Container maxWidth={'4xl'} w={'full'} mt={5}>
       {educations.map((item, i) => (
         <EducationItem key={item.school + i} data={item} />
       ))}
