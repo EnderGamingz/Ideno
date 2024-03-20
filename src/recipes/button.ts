@@ -5,13 +5,19 @@ export const button = cva({
   base: {
     display: 'flex',
     alignItems: 'center',
-    borderRadius: 'sm',
-    py: 1,
-    px: 4,
+    borderRadius: 'full',
+    py: '8px',
+    px: '18px',
     gap: 2,
     cursor: 'pointer',
     fontWeight: 'semibold',
     transition: 'all 0.2s ease-in-out',
+    fontSize: '16px',
+    _hover: {
+      boxShadow: '0 2px 10px 0 rgba(0,0,0,0.2)',
+      outline: '1px solid black',
+      outlineOffset: '-3px',
+    },
   },
   variants: {
     variant: {
@@ -46,14 +52,8 @@ export const button = cva({
     },
     contentType: {
       icon: {
-        px: 2,
-        py: 1.5,
-        rounded: 'md',
-      },
-      iconRound: {
-        p: 1.5,
-        aspectRatio: 1,
-        rounded: 'full',
+        px: '8px',
+        py: '8px',
       },
     },
     pending: {
@@ -79,6 +79,11 @@ export const button = cva({
         px: 2,
         py: 1,
         fontSize: '0.8rem',
+      },
+      large: {
+        py: '10px',
+        px: '22px',
+        fontSize: '1.2rem',
       },
     },
   },

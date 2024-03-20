@@ -22,7 +22,7 @@ export default function EditDataDialog({
   return (
     <>
       <Button
-        contentType={'iconRound'}
+        contentType={'icon'}
         variant={'outline'}
         onClick={() => setIsOpen(true)}>
         {button}

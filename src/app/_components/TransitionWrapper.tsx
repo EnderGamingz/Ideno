@@ -22,10 +22,12 @@ export default function TransitionWrapper({
         pos: 'absolute',
         top: position === 'top' ? '2.5rem' : undefined,
         bottom: position === 'bottom' ? '2.5rem' : undefined,
-        right: side === 'left' ? 0 : undefined,
-        left: side === 'right' ? 0 : undefined,
         zIndex: 10,
       })}
+      style={{
+        right: side === 'left' ? 0 : undefined,
+        left: side === 'right' ? 0 : undefined,
+      }}
       enter={'transition-200'}
       enterFrom={'opacity-0 scale-95'}
       enterTo={'opacity-100 scale-100'}

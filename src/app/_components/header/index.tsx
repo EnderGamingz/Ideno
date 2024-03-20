@@ -13,22 +13,20 @@ export default async function Header() {
       css={{
         display: 'grid',
         alignItems: 'center',
-        p: 2,
-        px: 4,
+        p: 3,
+        px: 5,
         gridTemplateColumns: 'repeat(3, 1fr)',
         gap: '1rem',
-        borderBottom: '1px solid',
-        bct: 'black/85',
         zIndex: 1000,
         pos: 'relative',
         bg: 'background',
+        boxShadow: '0 0 5px -1px rgba(0,0,0,0.1)',
       }}>
       <styled.nav
         css={{
           display: 'flex',
           alignItems: 'center',
           gap: 1,
-
           '& a': {
             transition: 'all 0.2s',
             rounded: 'sm',
@@ -48,7 +46,7 @@ export default async function Header() {
           <Image src={'/Logo.svg'} alt={'Ideno Logo'} width={40} height={40} />
         </Link>
       </Grid>
-      <HStack gap={2} justifyContent={'flex-end'}>
+      <HStack gap={3} justifyContent={'flex-end'}>
         {user ? (
           <>
             <Link className={button()} href={`/profile/${user.username}`}>

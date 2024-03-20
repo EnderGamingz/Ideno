@@ -39,7 +39,7 @@ export function ConfirmPopover({
         className={css(
           button.raw({
             variant: 'outline',
-            contentType: buttonType === 'icon' ? 'iconRound' : undefined,
+            contentType: buttonType === 'icon' ? 'icon' : undefined,
           }),
           css.raw({
             w: 'full',
