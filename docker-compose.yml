@@ -1,13 +1,17 @@
 version: "3.3"
 
 services:
-  s_postgres:
-    image: 'postgres:16.1-alpine'
+  ideno_server:
+    image: 'registry.setilic.com/ideno/server:latest'
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5000:5000"
     environment:
-      - POSTGRES_USER=main
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=main
-    volumes:
-      - ./db:/var/lib/postgresql/data
+      - "DATABASE_URL=sqlite:///usr/src/ideno/.temp/ideno.db"
+      - "CORS_ORIGIN=http://localhost:3000"
+      - "PORT=5000"
+
+
+  ideno_client:
+    image: 'registry.setilic.com/ideno/client:latest'
+    ports:
+      - "127.0.0.1:3000:3000"

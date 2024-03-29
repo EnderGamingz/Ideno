@@ -1,9 +1,5 @@
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-
-export async function clearSession() {
-  cookies().delete('id');
-}
+import { clearSession } from '@/app/api/session/clear/clearSession';
 
 export async function GET() {
   await clearSession();
