@@ -1,7 +1,9 @@
 [package]
 name = "ideno-server"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
+authors = ["Philipp Hergenhahn <philipp.hergenhahn@setilic.com>"]
+repository = "https://git.flouet.com/philipp.hergenhahn/ideno-next"
 
 [dependencies]
 tokio = { version = "1.29.1", features = ["full"] }

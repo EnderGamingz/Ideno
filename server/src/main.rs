@@ -39,6 +39,13 @@ pub struct AppState {
     experience_service: ExperienceService,
 }
 
+/// This is the main entry point for the server application.
+///
+/// It panics and stops execution when critical environmental variables are missing or a database connection cannot be established.
+///
+/// # Note
+/// Environment variables used: `CORS_ORIGIN`, `DATABASE_URL` and optional `PORT` (default is 3000).
+///
 #[tokio::main]
 async fn main() {
     dotenv().ok();

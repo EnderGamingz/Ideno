@@ -5,6 +5,25 @@ use tower_sessions::Session;
 use crate::response::error_handling::AppError;
 use crate::AppState;
 
+/// Asynchronously retrieves public experiences for a user.
+///
+/// # Arguments
+///
+/// * `state` - The application state containing service instances.
+/// * `session` - The session information for the current user.
+/// * `identifier` - The username of the user whose experiences are to be retrieved.
+///
+/// # Returns
+///
+/// Returns a JSON representation of the public experiences associated with the user.
+/// The outcome differs based on whether the current user is the owner of the profile or not.
+/// If the current user is the owner, it retrieves authenticated experiences.
+/// If the current user is not the owner, it retrieves public experiences.
+///
+/// # Errors
+///
+/// Returns an `AppError` if there is an error during the retrieval process.
+///
 pub async fn get_public_experiences(
     State(state): State<AppState>,
     session: Session,

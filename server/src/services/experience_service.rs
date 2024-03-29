@@ -33,6 +33,20 @@ impl ExperienceService {
         ExperienceService { db_pool }
     }
 
+    /// Asynchronously retrieves experiences associated with an authenticated user from the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `user_id` - The ID of the authenticated user whose experiences are to be retrieved.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing a vector of `AuthExperienceModel` instances representing the experiences associated with the authenticated user.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `AppError::InternalError` if there is an internal error while querying the database.
+    ///
     pub async fn get_authenticated_experiences(
         &self,
         user_id: i32,
@@ -56,6 +70,21 @@ impl ExperienceService {
         .map_err(|_| AppError::InternalError)
     }
 
+    /// Asynchronously retrieves public experiences associated with a user from the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `user_id` - The ID of the user whose public experiences are to be retrieved.
+    /// * `limit` - An optional limit on the number of experiences to retrieve. If not provided, retrieves all experiences.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing a vector of `PublicExperienceModel` instances representing the public experiences associated with the user.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `AppError::InternalError` if there is an internal error while querying the database.
+    ///
     pub async fn get_public_experiences(
         &self,
         user_id: i32,
@@ -82,6 +111,23 @@ impl ExperienceService {
         .map_err(|_| AppError::InternalError)
     }
 
+    /// Asynchronously checks if a user owns a specific experience.
+    ///
+    /// # Arguments
+    ///
+    /// * `user_id` - The ID of the user to check ownership.
+    /// * `experience_id` - The ID of the experience to check ownership against.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing an `Option<bool>`. If the user owns the experience, it returns `Some(true)`,
+    /// if the user does not own the experience, it returns `Some(false)`. If the experience is not found, it returns `None`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `AppError::InternalError` if there is an internal error while querying the database.
+    /// Returns an `AppError::NotFound` with an error message if the experience is not found.
+    ///
     pub async fn user_owns_experience(
         &self,
         user_id: i32,
@@ -104,6 +150,22 @@ impl ExperienceService {
         }
     }
 
+    /// Asynchronously deletes an experience associated with a user from the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `user_id` - The ID of the user who owns the experience to be deleted.
+    /// * `experience_id` - The ID of the experience to be deleted.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` indicating the outcome of the delete operation. If the experience is successfully deleted,
+    /// it returns `Ok(IdenoDBResult)`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `AppError::InternalError` if there is an internal error while executing the delete operation.
+    ///
     pub async fn delete_experience(
         &self,
         user_id: i32,
@@ -117,6 +179,23 @@ impl ExperienceService {
             .map_err(|_| AppError::InternalError)
     }
 
+    /// Asynchronously updates an experience associated with a user in the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `user_id` - The ID of the user who owns the experience to be updated.
+    /// * `experience_id` - The ID of the experience to be updated.
+    /// * `payload` - An `UpdateExperiencePayload` containing the updated data for the experience.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` indicating the outcome of the update operation. If the experience is successfully updated,
+    /// it returns `Ok(IdenoDBResult)`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `AppError::InternalError` if there is an internal error while executing the update operation.
+    ///
     pub async fn update_experience(
         &self,
         user_id: i32,
@@ -139,6 +218,21 @@ impl ExperienceService {
             .map_err(|_| AppError::InternalError)
     }
 
+    /// Asynchronously creates a new experience for a user in the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `user_id` - The ID of the user for whom the experience is to be created.
+    /// * `payload` - An `AddExperiencePayload` containing the details of the experience to be created.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing the ID of the newly created experience if the operation is successful.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `AppError::InternalError` if there is an internal error while executing the insert operation.
+    ///
     pub async fn create_experience(
         &self,
         user_id: i32,
@@ -160,6 +254,20 @@ impl ExperienceService {
             .map(|id| id.0)
     }
 
+    /// Validates the experience type.
+    ///
+    /// # Arguments
+    ///
+    /// * `experience_type` - An optional reference to the experience type.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` indicating whether the experience type is valid (`Ok(true)`) or invalid (`Err(AppError::BadRequest)`).
+    ///
+    /// # Errors
+    ///
+    /// Returns an `AppError::BadRequest` with an error message if the experience type is invalid.
+    ///
     pub fn validate_experience_type(
         &self,
         experience_type: &Option<String>,
@@ -180,6 +288,20 @@ impl ExperienceService {
         Ok(true)
     }
 
+    /// Asynchronously retrieves the count of experiences associated with a user from the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `user_id` - The ID of the user whose experience count is to be retrieved.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing the count of experiences associated with the user.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `AppError::InternalError` if there is an internal error while querying the database.
+    ///
     pub async fn get_experience_count(&self, user_id: i32) -> Result<i64, AppError> {
         sqlx::query_as::<_, (i64,)>("SELECT COUNT(*) FROM experiences WHERE user_id = $1")
             .bind(user_id)
@@ -189,6 +311,20 @@ impl ExperienceService {
             .map(|id| id.0)
     }
 
+    /// Asynchronously retrieves all experiences associated with a user from the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `user_id` - The ID of the user whose experiences are to be retrieved.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing a vector of `ExperienceModel` instances representing all experiences associated with the user.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `AppError::InternalError` if there is an internal error while querying the database.
+    ///
     pub async fn get_all_experiences(
         &self,
         user_id: i32,
@@ -202,6 +338,20 @@ impl ExperienceService {
         .map_err(|_| AppError::InternalError)
     }
 
+    /// Asynchronously deletes an experience from the database for administrative purposes.
+    ///
+    /// # Arguments
+    ///
+    /// * `experience_id` - The ID of the experience to be deleted.
+    ///
+    /// # Returns
+    ///
+    /// Returns `Result<(), AppError>` indicating the outcome of the delete operation. If the experience is successfully deleted, it returns `Ok(())`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `AppError::InternalError` if there is an internal error while executing the delete operation.
+    ///
     pub async fn admin_delete_experience(&self, experience_id: i32) -> Result<(), AppError> {
         sqlx::query("DELETE FROM experiences WHERE id = $1")
             .bind(experience_id)
@@ -211,6 +361,22 @@ impl ExperienceService {
             .map(|_| ())
     }
 
+    /// Asynchronously checks if an experience exists in the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `experience_id` - The ID of the experience to check for existence.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing an `Option<bool>`. If the experience exists, it returns `Some(true)`.
+    /// If the experience does not exist, it returns `Some(false)`. If there is an error while querying the database, it returns `None`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `AppError::InternalError` if there is an internal error while querying the database.
+    /// Returns an `AppError::NotFound` with an error message if the experience is not found.
+    ///
     pub async fn experience_exists(&self, experience_id: i32) -> Result<Option<bool>, AppError> {
         let flag = sqlx::query_as::<_, (i64,)>("SELECT COUNT(*) FROM experiences WHERE id = $1")
             .bind(experience_id)

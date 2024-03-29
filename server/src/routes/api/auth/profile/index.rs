@@ -17,6 +17,29 @@ pub async fn get_profile(
     Ok(Json(serde_json::to_value(profile).unwrap()))
 }
 
+/// Asynchronously updates the public profile of a user.
+///
+/// # Arguments
+///
+/// * `state` - The application state containing service instances.
+/// * `session` - The session information for the current user.
+/// * `payload` - A JSON payload containing the updated public profile information.
+///
+/// # Returns
+///
+/// Returns a JSON representation of the updated public profile.
+///
+/// # Note
+///
+/// The function manages pronouns by checking if a pronoun template exists in the payload.
+/// If a template exists, it checks for a corresponding pronoun in the template mapping.
+/// If a corresponding pronoun is found, it replaces the template with the full pronoun.
+/// If no corresponding pronoun is found or if there is no template, it retains the original pronoun.
+///
+/// # Errors
+///
+/// Returns an `AppError` if there is an error during the update process.
+///
 pub async fn update_profile(
     State(state): State<AppState>,
     session: Session,

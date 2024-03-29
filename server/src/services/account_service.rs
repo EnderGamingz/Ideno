@@ -31,6 +31,21 @@ impl AccountService {
         AccountService { db_pool }
     }
 
+    /// Asynchronously creates a new user account in the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `payload` - A `RegisterCredentials` struct containing the user's registration data.
+    /// * `hash` - A string representing the hashed password for the user account.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing the `UserModel` representing the newly created user account.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `AppError::InternalError` if there is an internal error while executing the insert operation.
+    ///
     pub async fn create_account(
         &self,
         payload: RegisterCredentials,
@@ -47,6 +62,22 @@ impl AccountService {
         .map_err(|_| return AppError::InternalError)
     }
 
+    /// Asynchronously updates the password for a user in the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `user_id` - The ID of the user whose password is to be updated.
+    /// * `hash` - A string representing the hashed password to be set for the user.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` indicating the outcome of the update operation. If the password is successfully updated,
+    /// it returns `Ok(IdenoDBResult)`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `AppError::InternalError` if there is an internal error while executing the update operation.
+    ///
     pub async fn update_password(
         &self,
         user_id: i32,
@@ -60,6 +91,22 @@ impl AccountService {
             .map_err(|_| return AppError::InternalError)
     }
 
+    /// Asynchronously updates the username for a user in the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `user_id` - The ID of the user whose username is to be updated.
+    /// * `username` - The new username to be set for the user.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` indicating the outcome of the update operation. If the username is successfully updated,
+    /// it returns `Ok(IdenoDBResult)`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `AppError::InternalError` if there is an internal error while executing the update operation.
+    ///
     pub async fn update_username(
         &self,
         user_id: i32,
@@ -73,6 +120,22 @@ impl AccountService {
             .map_err(|_| return AppError::InternalError)
     }
 
+    /// Asynchronously updates the email address for a user in the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `user_id` - The ID of the user whose email address is to be updated.
+    /// * `email` - The new email address to be set for the user.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` indicating the outcome of the update operation. If the email address is successfully updated,
+    /// it returns `Ok(IdenoDBResult)`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `AppError::InternalError` if there is an internal error while executing the update operation.
+    ///
     pub async fn update_email(
         &self,
         user_id: i32,
@@ -86,6 +149,20 @@ impl AccountService {
             .map_err(|_| return AppError::InternalError)
     }
 
+    /// Asynchronously checks if an email address exists in the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `email` - A reference to the email address to be checked.
+    ///
+    /// # Returns
+    ///
+    /// Returns a boolean value indicating whether the email address exists in the database (`true`) or not (`false`).
+    ///
+    /// # Errors
+    ///
+    /// Returns `false` if there is an internal error while executing the query.
+    ///
     pub async fn email_exists(&self, email: &String) -> bool {
         let result = sqlx::query("SELECT id FROM users WHERE email = $1")
             .bind(email)
@@ -100,6 +177,20 @@ impl AccountService {
         }
     }
 
+    /// Asynchronously checks if a username exists in the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `username` - A reference to the username to be checked.
+    ///
+    /// # Returns
+    ///
+    /// Returns a boolean value indicating whether the username exists in the database (`true`) or not (`false`).
+    ///
+    /// # Errors
+    ///
+    /// Returns `false` if there is an internal error while executing the query.
+    ///
     pub async fn username_exists(&self, username: &String) -> bool {
         let result = sqlx::query("SELECT id FROM users WHERE username = $1")
             .bind(username)

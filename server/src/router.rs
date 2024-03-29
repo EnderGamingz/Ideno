@@ -9,6 +9,15 @@ use tracing::Level;
 use crate::routes::api::{auth, profile};
 use crate::AppState;
 
+/// Creates the authentication routes.
+///
+/// The function sets up the routes for authentication related operations like
+/// login, registration, logout, updating account information, and updating passwords.
+///
+/// # Returns
+///
+/// A `Router<AppState>` instance configured to handle the authentication routes.
+///
 fn create_auth_routes() -> Router<AppState> {
     let auth = auth::auth::auth;
     let login = auth::login::login;
@@ -30,6 +39,16 @@ fn create_auth_routes() -> Router<AppState> {
         .nest("/admin", create_auth_admin_routes())
 }
 
+/// Create routes for the authentication profile.
+///
+/// This function creates routes for managing the user's profile in the authentication system.
+/// It includes routes for getting, updating, adding, and deleting various profile information like contact information,
+/// certifications, educations, and experiences.
+///
+/// # Returns
+///
+/// A `Router<AppState>` instance configured to handle the authentication profile routes.
+///
 fn create_auth_profile_routes() -> Router<AppState> {
     let get_profile = auth::profile::index::get_profile;
     let update_profile = auth::profile::index::update_profile;
@@ -84,6 +103,17 @@ fn create_auth_profile_routes() -> Router<AppState> {
         )
 }
 
+
+
+/// Creates the authentication admin routes.
+///
+/// The function initializes various route handlers for managing users, certifications, education,
+/// experience, and contact information within the admin panel.
+///
+/// # Returns
+///
+/// Returns a `Router<AppState>` instance configured to handle the authentication admin routes.
+///
 fn create_auth_admin_routes() -> Router<AppState> {
     let get_all_users = auth::admin::user::admin_get_users;
     let get_user = auth::admin::user::admin_get_user;
@@ -111,6 +141,14 @@ fn create_auth_admin_routes() -> Router<AppState> {
         )
 }
 
+/// Creates the router for public profile routes.
+///
+/// This function constructs a router and sets up routes for various endpoints related to public profiles.
+///
+/// # Returns
+///
+/// A `Router<AppState>` instance configured to handle the public profile routes.
+///
 fn create_public_profile_routes() -> Router<AppState> {
     let get_public_profile = profile::index::get_public_profile;
     let get_public_certifications = profile::certification::get_public_certifications;
@@ -130,6 +168,32 @@ fn create_public_profile_routes() -> Router<AppState> {
         );
 }
 
+/// This function creates a new router with the specified configuration.
+///
+/// # Arguments
+///
+/// * `cors` - A `CorsLayer` instance to handle CORS in the routing.
+/// * `session_layer` - A `SessionManagerLayer<MemoryStore>` to manage sessions in the application.
+/// * `state` - An `AppState` instance representing the application state.
+///
+/// The function establishes various routes for "/auth" and "/profile" which are nested under "/api/v1".
+/// It applies the session_layer and cors middleware layers to the router along with tracing layer for logging.
+/// It also injects the application's state to the router.
+///
+/// # Returns
+///
+/// It returns an instance of a configured `Router`.
+///
+/// # Example
+///
+/// ```rust
+/// let cors = CorsLayer::new();
+/// let session_layer = SessionManagerLayer::new(MemoryStore::default())
+/// let state = AppState { ... };
+///
+/// let router = router(cors, session_layer, state);
+/// ```
+///
 pub fn router(
     cors: CorsLayer,
     session_layer: SessionManagerLayer<MemoryStore>,
