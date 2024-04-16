@@ -1,2 +1,5 @@
 target/
 Dockerfile
+.env
+*.db
+.temp/*
